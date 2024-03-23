@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { useStyle } from './AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Text, View } from 'react-native-animatable';
+import { View } from 'react-native';
 import { StatusBar } from 'react-native';
-// import OnBoardingScreen from './components/OnBoardingScreen';
-// import MainApp from './components/MainApp';
+import OnBoardingScreen from './components/OnBoardingScreen';
+import MainApp from './components/MainApp';
 
 export default function AppContainer() {
   const { appStyles } = useStyle();
@@ -44,13 +44,11 @@ export default function AppContainer() {
   return (
     <View style={[appStyles.background, appStyles.container]}>
       {showOnboarding ? (
-        <Text style={appStyles.text}>OnBoarding</Text>
-        // <OnBoardingScreen onComplete={handleOnboardingComplete} />
+        <OnBoardingScreen onComplete={handleOnboardingComplete} />
       ) : (
-        <Text>MainApp</Text>
-        // <MainApp reset={handleReset} />
+        <MainApp reset={handleReset} />
       )}
-      <StatusBar barStyle={ } />
+      <StatusBar barStyle={'default'} />
     </View>
   );
 }
