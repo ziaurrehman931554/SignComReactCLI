@@ -28,6 +28,7 @@ react {
     // nodeExecutableAndArgs = ["node"]
     //
     //   The command to run when bundling. By default is 'bundle'
+    bundleCommand = "./node_modules/.bin/react-native"
     // bundleCommand = "ram-bundle"
     //
     //   The path to the CLI configuration file. Default is empty.
