@@ -1,25 +1,19 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable react/no-unstable-nested-components */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, Button, Platform } from 'react-native';
 
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-// import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { useUser, useStyle } from '../AppContext';
 
-// import HomeScreen from './HomeScreen';
-// import CallScreen from './CallScreen';
-// import HistoryScreen from './HistoryScreen';
-// import AccountScreen from './AccountScreen';
-// import CallingScreen from './CallingScreen';
-// import SettingsScreen from './SettingsScreen';
-// import AboutScreen from './AboutScreen';
-// import DrawerScreen from './DrawerScreen';
+import HomeScreen from './HomeScreen';
+import CallScreen from './CallScreen';
+import HistoryScreen from './HistoryScreen';
+import AccountScreen from './AccountScreen';
+import CallingScreen from './CallingScreen';
+import SettingsScreen from './SettingsScreen';
+import AboutScreen from './AboutScreen';
+import DrawerScreen from './DrawerScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -39,36 +33,36 @@ export default function Home({ onLogout, userToken, reset }: HomeProps){
 
   function CallHome({navigation}: any) {
     return (
-      <Text>CallHome</Text>
-      // <HomeScreen userToken={users} store={store} navigation={navigation}/>
+      // <Text>CallHome</Text>
+      <HomeScreen userToken={users} store={store} navigation={navigation}/>
     );
   }
 
   function CallCall({navigation}: any ) {
     return (
-      <Text>CallHome</Text>
-      // <CallScreen navigation={navigation}/>
+      // <Text>CallHome</Text>
+      <CallScreen navigation={navigation}/>
     );
   }
 
   function CallHistory({navigation}: any) {
     return (
-      <Text>CallHome</Text>
-      // <HistoryScreen userToken={users} navigation={navigation} />
+      // <Text>CallHome</Text>
+      <HistoryScreen userToken={users} navigation={navigation} />
     );
   }
 
   function CallAccount({navigation}: any) {
     return (
-      <Text>CallHome</Text>
-      // <AccountScreen userToken={users} onLogout={onLogout} navigation={navigation}/>
+      // <Text>CallHome</Text>
+      <AccountScreen userToken={users} onLogout={onLogout} navigation={navigation}/>
     );
   }
 
   function CallSetting({navigation}: any) {
     return (
-      <Text>CallHome</Text>
-      // <SettingsScreen userToken={users} navigation={navigation}/>
+      // <Text>CallHome</Text>
+      <SettingsScreen userToken={users} navigation={navigation}/>
     );
   }
 
@@ -151,15 +145,22 @@ export default function Home({ onLogout, userToken, reset }: HomeProps){
 
   function CallDrawer({ navigation }: any){
     return (
-      <Text>CallHome</Text>
-      // <DrawerScreen navigation={navigation} user={users} onLogout={onLogout}/>
+      // <Text>CallHome</Text>
+      <DrawerScreen navigation={navigation} user={users} onLogout={onLogout}/>
     );
   }
 
   function CallCalling({ navigation }: any){
     return (
-      <Text>CallHome</Text>
-      // <CallingScreen navigation={navigation} userToken={users}/>
+      // <Text>CallHome</Text>
+      <CallingScreen navigation={navigation} userToken={users}/>
+    );
+  }
+
+  function CallAbout({ navigation }: any){
+    return (
+      // <Text>CallHome</Text>
+      <AboutScreen navigation={navigation}/>
     );
   }
 
@@ -169,7 +170,7 @@ export default function Home({ onLogout, userToken, reset }: HomeProps){
         <Stack.Screen name="MainScreen" component={MainScreen} options={{headerShown: false}}/>
         <Stack.Screen name="MakeCall" component={CallCalling} options={{headerShown: false, gestureEnabled: false}}/>
         <Stack.Screen name="Settings" component={CallSetting} options={{headerShown: false}}/>
-        <Stack.Screen name="About" component={CallAccount} options={{headerShown: false}}/>
+        <Stack.Screen name="About" component={CallAbout} options={{headerShown: false}}/>
         <Stack.Screen
           name="Drawer"
           component={CallDrawer}
@@ -187,8 +188,9 @@ export default function Home({ onLogout, userToken, reset }: HomeProps){
   }
 
   return (
-      <NavigationContainer>
-        {<MainNavigator />}
-      </NavigationContainer>
+    // <Text>abc</Text>
+    <>
+      {<MainNavigator />}
+    </>
   );
 }

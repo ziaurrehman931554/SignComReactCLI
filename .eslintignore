@@ -1,0 +1,8 @@
+/build/
+/config/
+/dist/
+/components/
+/*.js/
+/.tsx/
+/test/unit/coverage/
+*

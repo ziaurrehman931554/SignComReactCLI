@@ -82,6 +82,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        missingDimensionStrategy 'react-native-camera', 'general' // Add this line
     }
     signingConfigs {
         debug {
@@ -110,10 +111,25 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:flipper-integration")
 
+    // Add react-native-camera dependency
+    implementation project(':react-native-camera')
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
+    }
+}
+
+// Add the following block for dependency resolution
+configurations.all {
+    resolutionStrategy {
+        eachDependency { details ->
+            if (details.requested.group == 'com.facebook.react' &&
+                details.requested.name == 'react-native') {
+                details.useVersion '0.73.1' // Replace with your React Native version
+            }
+        }
     }
 }
 

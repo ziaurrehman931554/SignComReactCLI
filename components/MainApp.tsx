@@ -63,7 +63,8 @@ export default function MainApp({ reset }: MainAppProps) {
       {isAuthenticated && user ? (
         <Home onLogout={handleLogout} userToken={userToken} reset={reset} />
       ) : (
-        <Login onLogin={handleLogin} reset={reset} />
+        <Home onLogout={handleLogout} userToken={"zr931554@gmail.com"} reset={reset} /> //remove when done
+        // <Login onLogin={handleLogin} reset={reset} />
       )}
     </View>
   );
