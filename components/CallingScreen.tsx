@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, ImageBackground, StyleSheet, Platform, Dimensions, PermissionsAndroid } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, TouchableOpacity, ImageBackground, StyleSheet, Platform, Dimensions, PermissionsAndroid, Image } from "react-native";
 import { RNCamera } from "react-native-camera";
 import { Permission, request, PERMISSIONS, check, RESULTS } from "react-native-permissions"
 import { useStyle } from "../AppContext"; // Assume useUser is not used as it's not shown in the code
@@ -16,11 +16,22 @@ export default function CallingScreen({ navigation, userToken }: CallingScreenPr
   const { height } = Dimensions.get('screen');
 
   const [hasPermission, setHasPermission] = useState<any>(null);
-  const [cameraRef, setCameraRef] = useState<RNCamera | null>(null);
+  const cameraRef = useRef<RNCamera | null>(null);
   const [text, setText] = useState("This is container where the text of the signs are displayed.");
   const [cameraType, setCameraType] = useState(RNCamera.Constants.Type.front);
   const [isMicMuted, setIsMicMuted] = useState(false);
-  const [isCallOngoing, setIsCallOngoing] = useState(true);
+  const [isCallOngoing, setIsCallOngoing] = useState<boolean>(true);
+
+  const [capturedPhoto, setCapturedPhoto] = useState<any>(null);
+  const [isCameraReady, setIsCameraReady] = useState<boolean>(false);
+
+  const takePicture = async () => {
+    if (cameraRef.current && isCameraReady) {
+      const options = { quality: 0.5, base64: true, skipProcessing: true };
+      const data = await cameraRef.current.takePictureAsync(options);
+      setCapturedPhoto(data.uri);
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -41,7 +52,17 @@ export default function CallingScreen({ navigation, userToken }: CallingScreenPr
         setHasPermission(false);
       }
     })();
-  }, []);
+    let isCancelled = false;
+    const intervalId = setInterval(() => {
+      if (!isCancelled) {
+        takePicture();
+      }
+    }, 1000);
+    return () => {
+      isCancelled = true;
+      clearInterval(intervalId);
+    };
+  }, [isCameraReady]);
 
   if (hasPermission === null) {
     return <View />;
@@ -79,9 +100,12 @@ export default function CallingScreen({ navigation, userToken }: CallingScreenPr
               <RNCamera
                 style={{ flex: 1, borderRadius: 11, zIndex: -1 }}
                 type={cameraType}
-                ref={(ref) => setCameraRef(ref)}
+                ref={cameraRef}
+                autoFocus="on"
+                useCamera2Api
+                onCameraReady={() => setIsCameraReady(true)}
               />
-            )}
+            )}  
           </View>
         </View>
         <View style={styles.controlContainer}>
@@ -109,13 +133,9 @@ export default function CallingScreen({ navigation, userToken }: CallingScreenPr
         </View>
       </View>
       <View style={[styles.otherCamContainer, appStyles.colorBackground, { height: height - appStyles.top.paddingTop - 192 }]}>
-        {isCallOngoing && (
-          <RNCamera
-            style={{ flex: 1, borderRadius: 11, zIndex: -1 }}
-            type={RNCamera.Constants.Type.back}
-            ref={(ref) => setCameraRef(ref)}
-          />
-        )}
+        {isCallOngoing && capturedPhoto ? (
+          <Image source={{ uri: capturedPhoto }} style={{ flex: 1, borderRadius: 11, zIndex: -1 }} />
+        ) : null}
       </View>
     </ImageBackground>
   );
