@@ -1,8 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, SafeAreaView, TouchableOpacity, Image, TextInput, ImageBackground } from 'react-native';
-import { useStyle } from '../AppContext';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  TextInput,
+  ImageBackground,
+} from 'react-native';
+import {useStyle} from '../AppContext';
 
-import { ParamListBase, RouteProp, useRoute } from '@react-navigation/native';
+import {ParamListBase, RouteProp, useRoute} from '@react-navigation/native';
 
 interface RouteParams extends RouteProp<ParamListBase, string> {
   user: any;
@@ -13,35 +23,26 @@ interface CallScreenProps {
 }
 
 export default function CallScreen({navigation}: CallScreenProps) {
-  const { appStyles } = useStyle()
+  const {appStyles} = useStyle();
   const route = useRoute<RouteParams>();
-  const { user }: any = route?.params || '';
-  const u = user? user.Name: '';
-  const [callID, setCallId] = useState('-');
+  const {user}: any = route?.params || '';
+  const u = user ? user.Name : '';
+  const [generateID, setGenerateId] = useState('');
   const [joinID, setJoinId] = useState('');
- 
-  const generateCallID = () => {
-    const id = Math.floor(Math.random() * 1000000).toString();
-    setCallId(id);
-    setTimeout(() => {
-      if (user?.Name) {
-        navigation.navigate('MakeCall');
-      } else {
-        navigation.navigate('MakeCall');
-      }
-    }, 3000)
-  }
 
   const HandleJoin = () => {
+    console.log(generateID, joinID);
     if (user?.Name) {
-      navigation.navigate('MakeCall');
+      navigation.navigate('MakeCall', {generateID: generateID, joinID: joinID});
     } else {
-      navigation.navigate('MakeCall');
+      navigation.navigate('MakeCall', {generateID: generateID, joinID: joinID});
     }
-  }
+  };
 
   return (
-    <ImageBackground source={require('../assets/background.png')} style={[appStyles.container, appStyles.top]}>
+    <ImageBackground
+      source={require('../assets/background.png')}
+      style={[appStyles.container, appStyles.top]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <View style={[styles.backContainer, appStyles.colorBackground]}>
@@ -51,30 +52,54 @@ export default function CallScreen({navigation}: CallScreenProps) {
         <Text style={styles.headerText}>Make a Call</Text>
       </View>
       <View style={styles.joinContainer}>
-        <Text style={styles.title}>Join Using Call ID</Text>
+        <Text style={styles.title}>Join Existing Channel</Text>
         <View style={[styles.imgContainer, appStyles.containerBack]}>
-          <Image source={require('../assets/join.png')} style={styles.img}/>
+          <Image source={require('../assets/join.png')} style={styles.img} />
         </View>
-        <TextInput style={[styles.input, appStyles.containerBack, appStyles.text]} placeholderTextColor={appStyles.text.color} placeholder='Enter Call ID' value={joinID} onChangeText={(Text) => {setJoinId(Text)}}/>
-        <TouchableOpacity style={[styles.btn, appStyles.colorBackground]} onPress={HandleJoin}>
-          <Text style={[styles.btnText, appStyles.text]}>Join {u && (<Text>{u}</Text>)}</Text>
+        <TextInput
+          style={[styles.input, appStyles.containerBack, appStyles.text]}
+          placeholderTextColor={appStyles.text.color}
+          placeholder="Enter Channel Name"
+          value={joinID}
+          onChangeText={Text => {
+            setJoinId(Text);
+          }}
+        />
+        <TouchableOpacity
+          style={[styles.btn, appStyles.colorBackground]}
+          onPress={HandleJoin}>
+          <Text style={[styles.btnText, appStyles.text]}>
+            Join {u && <Text>{u}</Text>}
+          </Text>
         </TouchableOpacity>
       </View>
       <View style={styles.line}></View>
       <View style={styles.joinContainer}>
-        <Text style={styles.title}>Generate a Call ID {u && (<Text>for {u}</Text>)}</Text>
+        <Text style={styles.title}>
+          Generate New Channel {u && <Text>for {u}</Text>}
+        </Text>
         <View style={[styles.imgContainer, appStyles.containerBack]}>
-          <Image source={require('../assets/join.png')} style={styles.img}/>
+          <Image source={require('../assets/join.png')} style={styles.img} />
         </View>
-        <Text style={[styles.id, appStyles.containerBack, appStyles.text]}>{callID}</Text>
-        <TouchableOpacity style={[styles.btn, appStyles.colorBackground]} onPress={generateCallID}>
-          <Text style={[styles.btnText, appStyles.text]}>Generate</Text>
+        <TextInput
+          style={[styles.input, appStyles.containerBack, appStyles.text]}
+          placeholderTextColor={appStyles.text.color}
+          placeholder="Enter New Channel Name"
+          value={generateID}
+          onChangeText={Text => {
+            setGenerateId(Text);
+          }}
+        />
+        <TouchableOpacity
+          style={[styles.btn, appStyles.colorBackground]}
+          onPress={HandleJoin}>
+          <Text style={[styles.btnText, appStyles.text]}>Generate & Join</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.addPad}></View>
     </ImageBackground>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -110,7 +135,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     alignSelf: 'center',
-    zIndex: -1
+    zIndex: -1,
   },
   joinContainer: {
     width: '100%',
@@ -176,4 +201,4 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#517A90',
   },
-})
+});
