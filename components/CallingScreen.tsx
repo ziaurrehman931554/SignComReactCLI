@@ -23,6 +23,7 @@ import {
   StylePropInterface,
   PropsProvider,
 } from 'agora-rn-uikit/src/Contexts/PropsContext';
+import HandGestureDetection from './HandGestureDetection';
 
 interface CallingScreenProps {
   navigation: any;
@@ -49,7 +50,18 @@ const CallingScreen = ({userToken, navigation, route}: CallingScreenProps) => {
       setChannelName(generateID);
     }
   }, [joinID, generateID]);
-  console.log(joinID, generateID);
+
+  const handleResults = (results: any) => {
+    if (results.length > 0) {
+      // Process hand landmarks
+      console.log('Hand landmarks:', results);
+      // You can set caption based on hand gesture recognition here
+      setCaption(results);
+    } else {
+      setCaption('No hand detected');
+    }
+  };
+
   const props: PropsInterface = {
     rtcProps: {appId: appId, channel: channelName},
     callbacks: {
@@ -119,6 +131,7 @@ const CallingScreen = ({userToken, navigation, route}: CallingScreenProps) => {
           rtcCallbacks={props.callbacks}
           styleProps={style}
         />
+        <HandGestureDetection onResults={handleResults} />
         <View style={styles.captionContainer}>
           <Text style={styles.caption}>{caption}</Text>
         </View>
