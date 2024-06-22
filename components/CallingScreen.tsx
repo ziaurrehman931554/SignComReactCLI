@@ -1,13 +1,28 @@
 // CallingScreen.tsx
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Button} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+  Text,
+  ImageBackground,
+  ToastAndroid,
+  Platform,
+  Dimensions,
+} from 'react-native';
 import AgoraUIKit from 'agora-rn-uikit';
 import {
   ChannelProfileType,
   IRtcEngine,
+  RenderModeType,
   createAgoraRtcEngine,
 } from 'react-native-agora';
-import {PropsInterface} from 'agora-rn-uikit/src/Contexts/PropsContext';
+import {
+  PropsInterface,
+  StylePropInterface,
+  PropsProvider,
+} from 'agora-rn-uikit/src/Contexts/PropsContext';
 
 interface CallingScreenProps {
   navigation: any;
@@ -19,9 +34,13 @@ const appId = '5d4f500c39834c95ae5a04635a3f0ab8';
 const uid = 0;
 
 const CallingScreen = ({userToken, navigation, route}: CallingScreenProps) => {
-  const [channelName, setChannelName] = useState('test-channel'); // Use a unique channel name
+  const {height} = Dimensions.get('window');
+  const [channelName, setChannelName] = useState('test-channel');
   const [isJoined, setIsJoined] = useState(true);
-  const {joinID, generateID} = route.params || {}; // Ensure route.params is handled safely
+  const [caption, setCaption] = useState(
+    'This is where sign data will be displayed',
+  );
+  const {joinID, generateID} = route.params || {};
 
   useEffect(() => {
     if (joinID) {
@@ -38,47 +57,98 @@ const CallingScreen = ({userToken, navigation, route}: CallingScreenProps) => {
         setIsJoined(false);
         navigation.goBack();
       },
+      LocalMuteAudio: mute => ToastAndroid.show('mute', mute),
     },
-    styleProps: {
-      localBtnContainer: {
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        borderRadius: 5,
-        flexDirection: 'row', // Ensure buttons are in a row
-        justifyContent: 'center', // Ensure buttons are centered
-        height: 50,
-        width: 200,
+  };
+
+  const style: StylePropInterface = {
+    UIKitContainer: {
+      backgroundColor: 'transparent',
+      marginHorizontal: 30,
+      marginTop: 5,
+    },
+    videoMode: {
+      max: RenderModeType.RenderModeHidden,
+      min: RenderModeType.RenderModeHidden,
+    },
+    maxViewStyles: {
+      height: '75%',
+      zIndex: 10,
+      borderRadius: 150,
+    },
+    minViewStyles: {
+      position: 'absolute',
+      right: -300,
+      top: height - 350,
+      width: 80,
+    },
+    localBtnContainer: {
+      borderRadius: 5,
+      flexDirection: 'row', // Ensure buttons are in a row
+      justifyContent: 'center', // Ensure buttons are centered
+      height: 50,
+      padding: 5,
+      gap: 8,
+      marginTop: -100,
+    },
+    localBtnStyles: {
+      muteLocalVideo: {
+        backgroundColor: 'gray',
       },
-      localBtnStyles: {
-        muteLocalVideo: {
-          backgroundColor: 'red',
-        },
-        switchCamera: {
-          backgroundColor: 'blue',
-        },
-        endCall: {
-          backgroundColor: 'red',
-        },
-        muteLocalAudio: {
-          backgroundColor: 'blue',
-        },
+      switchCamera: {
+        backgroundColor: 'gray',
+      },
+      endCall: {
+        backgroundColor: 'red',
+        height: 60,
+        width: 60,
+      },
+      muteLocalAudio: {
+        backgroundColor: 'gray',
       },
     },
   };
 
   return (
-    <View style={styles.container}>
-      <AgoraUIKit
-        connectionData={props.rtcProps}
-        rtcCallbacks={props.callbacks}
-        styleProps={props.styleProps}
-      />
-    </View>
+    <ImageBackground
+      source={require('../assets/background.png')}
+      style={styles.container}>
+      <View style={styles.container}>
+        <AgoraUIKit
+          connectionData={props.rtcProps}
+          rtcCallbacks={props.callbacks}
+          styleProps={style}
+        />
+        <View style={styles.captionContainer}>
+          <Text style={styles.caption}>{caption}</Text>
+        </View>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  captionContainer: {
+    position: 'absolute',
+    bottom: 100,
+    left: 20,
+    height: 80,
+    width: 180,
+    borderRadius: 15,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  caption: {
+    height: '100%',
+    width: '100%',
+    color: 'white',
+    fontSize: 15,
+    padding: 3,
+    overflow: 'scroll',
   },
 });
 
