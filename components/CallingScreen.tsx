@@ -1,5 +1,5 @@
 // CallingScreen.tsx
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   ToastAndroid,
   Platform,
   Dimensions,
+  Image,
 } from 'react-native';
 import AgoraUIKit from 'agora-rn-uikit';
 import {
@@ -23,6 +24,7 @@ import {
   StylePropInterface,
   PropsProvider,
 } from 'agora-rn-uikit/src/Contexts/PropsContext';
+import ViewShot from 'react-native-view-shot';
 import HandGestureDetection from './HandGestureDetection';
 
 interface CallingScreenProps {
@@ -42,6 +44,8 @@ const CallingScreen = ({userToken, navigation, route}: CallingScreenProps) => {
     'This is where sign data will be displayed',
   );
   const {joinID, generateID} = route.params || {};
+  const [screenshot, setScreenshot] = useState<string | null>(null);
+  const viewShotRef = useRef<ViewShot | null>(null);
 
   useEffect(() => {
     if (joinID) {
@@ -50,6 +54,27 @@ const CallingScreen = ({userToken, navigation, route}: CallingScreenProps) => {
       setChannelName(generateID);
     }
   }, [joinID, generateID]);
+
+  const takeScreenshot = () => {
+    if (viewShotRef.current) {
+      viewShotRef.current
+        .capture()
+        .then((uri: any) => {
+          setScreenshot(uri);
+          console.log('Screenshot captured:', uri);
+        })
+        .catch((error: any) => {
+          console.error('Failed to take screenshot:', error);
+        });
+    }
+  };
+
+  const initiateScreenshot = () => {
+    setInterval(() => {
+      takeScreenshot();
+    }, 10000);
+    return <></>;
+  };
 
   const handleResults = (results: any) => {
     if (results.length > 0) {
@@ -126,15 +151,24 @@ const CallingScreen = ({userToken, navigation, route}: CallingScreenProps) => {
       source={require('../assets/background.png')}
       style={styles.container}>
       <View style={styles.container}>
-        <AgoraUIKit
-          connectionData={props.rtcProps}
-          rtcCallbacks={props.callbacks}
-          styleProps={style}
-        />
-        <HandGestureDetection onResults={handleResults} />
+        <ViewShot
+          ref={viewShotRef}
+          options={{format: 'jpg', quality: 0.9}}
+          style={styles.viewShotContainer}>
+          <AgoraUIKit
+            connectionData={props.rtcProps}
+            rtcCallbacks={props.callbacks}
+            styleProps={style}
+          />
+        </ViewShot>
+        {initiateScreenshot()}
+        {/* <HandGestureDetection onResults={handleResults} /> */}
         <View style={styles.captionContainer}>
           <Text style={styles.caption}>{caption}</Text>
         </View>
+        {screenshot && (
+          <Image source={{uri: screenshot}} style={styles.screenshot} />
+        )}
       </View>
     </ImageBackground>
   );
@@ -143,6 +177,10 @@ const CallingScreen = ({userToken, navigation, route}: CallingScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  viewShotContainer: {
+    flex: 1,
+    position: 'relative',
   },
   captionContainer: {
     position: 'absolute',
@@ -162,6 +200,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     padding: 3,
     overflow: 'scroll',
+  },
+  screenshot: {
+    position: 'absolute',
+    bottom: 200,
+    left: 20,
+    width: 300,
+    height: 300,
+    borderRadius: 10,
   },
 });
 
