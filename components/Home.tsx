@@ -23,6 +23,7 @@ import CallingScreen from './CallingScreen';
 import SettingsScreen from './SettingsScreen';
 import AboutScreen from './AboutScreen';
 import DrawerScreen from './DrawerScreen';
+import CallingScreens from './CallingScreens';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -190,7 +191,7 @@ export default function Home({onLogout, userToken, reset}: HomeProps) {
   function CallCalling({navigation, route}: any) {
     return (
       // <Text>CallHome</Text>
-      <CallingScreen navigation={navigation} userToken={users} route={route} />
+      <CallingScreens navigation={navigation} userToken={users} route={route} />
     );
   }
 

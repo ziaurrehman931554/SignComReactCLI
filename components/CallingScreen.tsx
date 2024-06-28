@@ -12,13 +12,8 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import AgoraUIKit from 'agora-rn-uikit';
-import {
-  ChannelProfileType,
-  IRtcEngine,
-  RenderModeType,
-  createAgoraRtcEngine,
-} from 'react-native-agora';
+import AgoraUIKit, {RenderModeType} from 'agora-rn-uikit';
+
 import {
   PropsInterface,
   StylePropInterface,
@@ -150,26 +145,26 @@ const CallingScreen = ({userToken, navigation, route}: CallingScreenProps) => {
     <ImageBackground
       source={require('../assets/background.png')}
       style={styles.container}>
-      <View style={styles.container}>
-        <ViewShot
-          ref={viewShotRef}
-          options={{format: 'jpg', quality: 0.9}}
-          style={styles.viewShotContainer}>
+      <ViewShot
+        ref={viewShotRef}
+        options={{format: 'jpg', quality: 0.9}}
+        style={styles.viewShotContainer}>
+        <View style={styles.container}>
           <AgoraUIKit
             connectionData={props.rtcProps}
             rtcCallbacks={props.callbacks}
             styleProps={style}
           />
-        </ViewShot>
-        {initiateScreenshot()}
-        {/* <HandGestureDetection onResults={handleResults} /> */}
-        <View style={styles.captionContainer}>
-          <Text style={styles.caption}>{caption}</Text>
+          {initiateScreenshot()}
+          {/* <HandGestureDetection onResults={handleResults} /> */}
+          <View style={styles.captionContainer}>
+            <Text style={styles.caption}>{caption}</Text>
+          </View>
+          {screenshot && (
+            <Image source={{uri: screenshot}} style={styles.screenshot} />
+          )}
         </View>
-        {screenshot && (
-          <Image source={{uri: screenshot}} style={styles.screenshot} />
-        )}
-      </View>
+      </ViewShot>
     </ImageBackground>
   );
 };
@@ -181,6 +176,7 @@ const styles = StyleSheet.create({
   viewShotContainer: {
     flex: 1,
     position: 'relative',
+    backgroundColor: 'transparent',
   },
   captionContainer: {
     position: 'absolute',
