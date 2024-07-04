@@ -19,11 +19,10 @@ import HomeScreen from './HomeScreen';
 import CallScreen from './CallScreen';
 import HistoryScreen from './HistoryScreen';
 import AccountScreen from './AccountScreen';
-import CallingScreen from './CallingScreen';
+import CallingScreens from './CallingScreens';
 import SettingsScreen from './SettingsScreen';
 import AboutScreen from './AboutScreen';
 import DrawerScreen from './DrawerScreen';
-import CallingScreens from './CallingScreens';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -32,25 +31,23 @@ const Stack = createStackNavigator();
 interface HomeProps {
   onLogout: () => void;
   userToken: string;
-  reset: () => void;
 }
 
-export default function Home({onLogout, userToken, reset}: HomeProps) {
-  const {appStyles, toggleAppColor} = useStyle();
+export default function Home({onLogout, userToken}: HomeProps) {
   const {findUserByEmail} = useUser();
   const users: any = findUserByEmail(userToken);
-  const [user, setUser] = useState<any>('');
 
   function CallHome({navigation}: any) {
     return (
       // <Text>CallHome</Text>
-      <HomeScreen userToken={users} store={store} navigation={navigation} />
+      <HomeScreen userToken={users} navigation={navigation} />
     );
   }
 
-  function CallCall({navigation}: any) {
+  function CallCall({navigation, route}: any) {
     return (
       // <Text>CallHome</Text>
+      // <CallingScreens navigation={navigation} userToken={users} route={route} />
       <CallScreen navigation={navigation} />
     );
   }
@@ -177,10 +174,6 @@ export default function Home({onLogout, userToken, reset}: HomeProps) {
     );
   }
 
-  function store({userItem}: any) {
-    setUser(userItem);
-  }
-
   function CallDrawer({navigation}: any) {
     return (
       // <Text>CallHome</Text>
@@ -188,10 +181,21 @@ export default function Home({onLogout, userToken, reset}: HomeProps) {
     );
   }
 
+  function handleTime({startTime, duration}: any) {
+    console.log('Start Time: ', startTime);
+    console.log('Duration: ', duration);
+  }
+
   function CallCalling({navigation, route}: any) {
+    console.log(route);
     return (
       // <Text>CallHome</Text>
-      <CallingScreens navigation={navigation} userToken={users} route={route} />
+      <CallingScreens
+        navigation={navigation}
+        userToken={users}
+        route={route}
+        handleTime={handleTime}
+      />
     );
   }
 

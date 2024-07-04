@@ -1,36 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Platform, Alert } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  TextInput,
+  Platform,
+  Alert,
+} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import { useNavigation, useNavigationState } from '@react-navigation/native';
-import { useStyle, useUser } from '../AppContext';
+import {useNavigationState} from '@react-navigation/native';
+import {useStyle, useUser} from '../AppContext';
 
 interface SettingsScreenProps {
   userToken: any;
   navigation: any;
 }
 
-export default function SettingsScreen({userToken, navigation}: SettingsScreenProps) {
-  const { updateUserByEmail } = useUser();
-  const { appStyles, theme } = useStyle();
-  const navigationState = useNavigationState((state) => state);
-  const [ isKBActive, setIsKBActive ] = useState(false);
-  const [ hidePass, setHidePass ] = useState(true);
+export default function SettingsScreen({
+  userToken,
+  navigation,
+}: SettingsScreenProps) {
+  const {updateUserByEmail} = useUser();
+  const {appStyles, theme} = useStyle();
+  const navigationState = useNavigationState(state => state);
+  const [isKBActive, setIsKBActive] = useState(false);
+  const [hidePass, setHidePass] = useState(true);
+  const [selectedType, setSelectedType] = useState(false);
 
-  const [ user, setUser ] = useState(
-    { Name: userToken.name, email: userToken.email, password: userToken.password, type: userToken.type }
-  )
+  const [user, setUser] = useState({
+    Name: userToken.name,
+    email: userToken.email,
+    password: userToken.password,
+    type: userToken.type,
+  });
 
   const showAlert = (title: string, message: any) => {
-    Alert.alert(title, message, [{ text: 'OK' }]);
+    Alert.alert(title, message, [{text: 'OK'}]);
   };
 
   const togglePasswordVisibility = () => {
-    setHidePass((prev) => !prev);
+    setHidePass(prev => !prev);
   };
 
   const handleInputChange = (fieldName: any, value: any) => {
-    setUser((prevUser) => ({
+    setUser(prevUser => ({
       ...prevUser,
       [fieldName]: value,
     }));
@@ -38,7 +53,7 @@ export default function SettingsScreen({userToken, navigation}: SettingsScreenPr
 
   const handleSave = () => {
     updateUserByEmail(userToken.email, user);
-    showAlert('Important', "Changed Saved");
+    showAlert('Important', 'Changed Saved');
     setTimeout(() => {
       navigation.goBack();
     }, 500);
@@ -67,6 +82,15 @@ export default function SettingsScreen({userToken, navigation}: SettingsScreenPr
 
   return (
     <View style={[styles.container, appStyles.background, appStyles.top]}>
+      <View style={{width: '100%'}}>
+        <Text>Current: {user.type}</Text>
+        <TouchableOpacity>
+          <Text>Normal</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text>Specially-abled</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <View style={[styles.backBTNContainer, appStyles.colorBackground]}>
@@ -77,47 +101,94 @@ export default function SettingsScreen({userToken, navigation}: SettingsScreenPr
       </View>
       <View style={styles.bodyContainer}>
         <View style={styles.infoContainer}>
-          <Text style={[styles.YPI, appStyles.colorText]}>Your Profile Information</Text>
+          <Text style={[styles.YPI, appStyles.colorText]}>
+            Your Profile Information
+          </Text>
           <View style={styles.profileImageContainer}>
             <View style={styles.imageContainer}>
-              <Image source={require('../assets/Profile.png')} style={styles.image}/>
+              <Image
+                source={require('../assets/Profile.png')}
+                style={styles.image}
+              />
             </View>
-            <View style={[styles.editContainer, theme === 'dark' ? {backgroundColor: '#D9D9D9'} : appStyles.colorBackground]}>
-              <Image source={require('../assets/edit.png')} style={styles.edit}/>
+            <View
+              style={[
+                styles.editContainer,
+                theme === 'dark'
+                  ? {backgroundColor: '#D9D9D9'}
+                  : appStyles.colorBackground,
+              ]}>
+              <Image
+                source={require('../assets/edit.png')}
+                style={styles.edit}
+              />
             </View>
           </View>
-          <Text style={[styles.PI, appStyles.colorText]}>Personal Information</Text>
+          <Text style={[styles.PI, appStyles.colorText]}>
+            Personal Information
+          </Text>
           <View style={[styles.entityContainer, appStyles.containerBack]}>
             <Text style={[styles.entityName, appStyles.colorText]}>Name</Text>
-            <TextInput style={styles.entityValue} placeholderTextColor={appStyles.text} placeholder='Enter Your name' value={user.Name} onChangeText={(text) => handleInputChange('Name', text)}></TextInput>
+            <TextInput
+              style={[styles.entityValue, appStyles.text]}
+              placeholderTextColor={appStyles.text}
+              placeholder="Enter Your name"
+              value={user.Name}
+              onChangeText={text =>
+                handleInputChange('Name', text)
+              }></TextInput>
           </View>
           <View style={[styles.entityContainer, appStyles.containerBack]}>
             <Text style={[styles.entityName, appStyles.colorText]}>Email</Text>
-            <TextInput style={styles.entityValue} placeholderTextColor={appStyles.text.color} placeholder='Enter Your email' value={user.email} onChangeText={(text) => handleInputChange('email', text)}></TextInput>
+            <TextInput
+              style={styles.entityValue}
+              placeholderTextColor={appStyles.text.color}
+              placeholder="Enter Your email"
+              value={user.email}
+              onChangeText={text =>
+                handleInputChange('email', text)
+              }></TextInput>
           </View>
           <View style={[styles.entityContainer, appStyles.containerBack]}>
             <TouchableOpacity onPress={togglePasswordVisibility}>
-              <Text style={[styles.entityName, appStyles.colorText]}>Password</Text>
+              <Text style={[styles.entityName, appStyles.colorText]}>
+                Password
+              </Text>
             </TouchableOpacity>
-            <TextInput style={styles.entityValue} placeholderTextColor={appStyles.text.color} placeholder='Enter Your password' secureTextEntry={hidePass} value={user.password} onChangeText={(text) => handleInputChange('password', text)}></TextInput>
+            <TextInput
+              style={[styles.entityValue, appStyles.text]}
+              placeholderTextColor={appStyles.text}
+              placeholder="Enter Your password"
+              secureTextEntry={hidePass}
+              value={user.password}
+              onChangeText={text =>
+                handleInputChange('password', text)
+              }></TextInput>
           </View>
           <View style={[styles.entityContainer, appStyles.containerBack]}>
             <Text style={[styles.entityName, appStyles.colorText]}>Type</Text>
+            <TouchableOpacity onPress={setSelectType(true)}>
+              <Text style={[styles.entityValue, appStyles.text]}>
+                {user.type}
+              </Text>
+            </TouchableOpacity>
             {/* {Platform.OS === 'ios' && ( */}
-              <RNPickerSelect
+            {/* <RNPickerSelect
               value={user.type}
               items={[
-                { label: 'Normal', value: 'normal' },
-                { label: 'Special', value: 'special' },
+                {label: 'Normal', value: 'normal'},
+                {label: 'Special', value: 'special'},
               ]}
-              onValueChange={(value) => handleInputChange('type', value)}
+              onValueChange={value => handleInputChange('type', value)}
               style={pickerSelectStyles}
-            />
+            /> */}
             {/* )} */}
           </View>
         </View>
-        { !isKBActive && (
-          <TouchableOpacity style={[styles.saveContainer, appStyles.colorBackground]} onPress={handleSave}>
+        {!isKBActive && (
+          <TouchableOpacity
+            style={[styles.saveContainer, appStyles.colorBackground]}
+            onPress={handleSave}>
             <Text style={[styles.save, appStyles.text]}>Save</Text>
           </TouchableOpacity>
         )}
@@ -152,7 +223,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     alignSelf: 'center',
-    zIndex: -1
+    opacity: 0.4,
   },
   bodyContainer: {
     display: 'flex',
@@ -235,10 +306,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   entityValue: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 50,
     fontSize: 12,
-    color: '#909BB1',
     textAlign: 'right',
     width: 200,
+    opacity: 0.7,
   },
   saveContainer: {
     height: 60,
@@ -252,4 +327,4 @@ const styles = StyleSheet.create({
   save: {
     fontSize: 17,
   },
-})
+});

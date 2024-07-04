@@ -32,10 +32,10 @@ export default function CallScreen({navigation}: CallScreenProps) {
 
   const HandleJoin = () => {
     console.log(generateID, joinID);
-    if (user?.Name) {
-      navigation.navigate('MakeCall', {generateID: generateID, joinID: joinID});
+    if (joinID === '') {
+      navigation.navigate('MakeCall', {id: generateID});
     } else {
-      navigation.navigate('MakeCall', {generateID: generateID, joinID: joinID});
+      navigation.navigate('MakeCall', {id: joinID});
     }
   };
 
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     alignSelf: 'center',
-    zIndex: -1,
+    opacity: 0.5,
   },
   joinContainer: {
     width: '100%',
@@ -198,7 +198,9 @@ const styles = StyleSheet.create({
   line: {
     width: '90%',
     height: 3,
+    margin: 5,
     alignSelf: 'center',
     backgroundColor: '#517A90',
+    opacity: 0.3,
   },
 });

@@ -1,122 +1,207 @@
-import React, { useState } from 'react';
-import { View, Text, SafeAreaView, ImageBackground, StyleSheet, Image, TextInput, FlatList, Button, ScrollView, TouchableOpacity, TouchableHighlight, Platform } from 'react-native';
-import { useUser, useStyle } from '../AppContext';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ImageBackground,
+  StyleSheet,
+  Image,
+  TextInput,
+  FlatList,
+  Button,
+  ScrollView,
+  TouchableOpacity,
+  TouchableHighlight,
+  Platform,
+} from 'react-native';
+import {useUser, useStyle} from '../AppContext';
 
 interface HomeScreenProps {
   userToken: any;
-  store: any;
   navigation: any;
 }
 
-export default function HomeScreen({userToken, store, navigation}: HomeScreenProps) {
-  const { appStyles, theme } = useStyle();
-  const { searchText, setSearchText} = useUser()
+export default function HomeScreen({userToken, navigation}: HomeScreenProps) {
+  const {appStyles, theme} = useStyle();
+  const {searchText, setSearchText, updateUserByEmail} = useUser();
+  const [isEditing, setIsEditing] = useState(false);
 
-    const renderFavorites = () => {
+  const renderFavorites = () => {
+    const deleteFavorite = (name: string) => {
+      const updatedFavorites = userToken.favorites.filter(
+        (item: any) => item.Name !== name,
+      );
+      updateUserByEmail(userToken.email, {favorites: updatedFavorites});
+      console.log(userToken.favorites);
+    };
     return (
       <ScrollView
         horizontal
         contentContainerStyle={styles.fav_wrapper}
         showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-      >
+        showsVerticalScrollIndicator={false}>
         {userToken.favorites.map((item: any) => (
           <TouchableOpacity
-            style={[styles.fav_container, appStyles.background, 
-              {borderColor: theme === 'dark' ? '#979797' : 'black', 
-                shadowColor: theme === 'dark' ? 'white' : 'black', 
-                shadowOffset: {width: 0, height: 0}, 
-                shadowOpacity: 0.5, 
-                shadowRadius: 5, 
-                elevation: 5,}
-              ]}
+            style={[
+              styles.fav_container,
+              appStyles.containerBack,
+              {
+                borderColor: theme === 'dark' ? '#979797' : 'black',
+                shadowColor: theme === 'dark' ? 'white' : 'black',
+                shadowOffset: {width: 0, height: 0},
+                shadowOpacity: 0.5,
+                shadowRadius: 5,
+                elevation: 5,
+              },
+            ]}
             key={item.Name}
-            onPress={() => navigation.navigate('Call', { user: item })}
-          >
+            onPress={() =>
+              !isEditing && navigation.navigate('Call', {user: item})
+            }>
+            {isEditing && (
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => deleteFavorite(item.Name)}>
+                <Text style={styles.deleteText}>X</Text>
+              </TouchableOpacity>
+            )}
             <View style={styles.fav_img}>
-              <Image source={require('../assets/Profile.png')} style={styles.fav_profileImage} />
+              <Image
+                source={require('../assets/Profile.png')}
+                style={styles.fav_profileImage}
+              />
             </View>
-            <Text style={[styles.fav_name, appStyles.text]}>{item.Name}</Text>  
+            <Text style={[styles.fav_name, appStyles.text]}>{item.Name}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
     );
   };
 
-    const renderRecent = () => {
-      return (
-        <>
+  const renderRecent = () => {
+    const deleteRecent = (name: string) => {
+      const updatedRecent = userToken.recent.filter(
+        (item: any) => item.Name !== name,
+      );
+      updateUserByEmail(userToken.email, {recent: updatedRecent});
+    };
+    return (
+      <>
         {userToken.recent.map((item: any) => (
           <TouchableOpacity
-            style={[styles.recent_container, appStyles.background, { borderColor: theme === 'dark' ? '#979797' : 'black', }]} 
-            key={item.Name} 
-            onPress={() => navigation.navigate('Call', { user: item })}
-          >
+            style={[
+              styles.recent_container,
+              appStyles.containerBack,
+              {borderColor: theme === 'dark' ? '#979797' : 'black'},
+            ]}
+            key={item.Name}
+            onPress={() =>
+              !isEditing && navigation.navigate('Call', {user: item})
+            }>
+            {isEditing && (
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => deleteRecent(item.Name)}>
+                <Text style={styles.deleteText}>X</Text>
+              </TouchableOpacity>
+            )}
             <View style={styles.recent_img}>
-              <Image source={require('../assets/Profile.png')} style={styles.recent_profileImage} />
+              <Image
+                source={require('../assets/Profile.png')}
+                style={styles.recent_profileImage}
+              />
             </View>
             <View style={styles.recent_data}>
-              <Text style={[styles.recent_data_name, appStyles.text]}>{item.Name}</Text>
-              <Text style={[styles.recent_data_time, appStyles.text]}>{item.last_call}</Text>
-            </View>
-            <View style={styles.recent_info}>
-              <Text style={styles.recent_info_text}>
-                ❗
+              <Text style={[styles.recent_data_name, appStyles.text]}>
+                {item.Name}
+              </Text>
+              <Text style={[styles.recent_data_time, appStyles.text]}>
+                {item.last_call}
               </Text>
             </View>
+            {/* <View style={styles.recent_info}>
+              <Text style={styles.recent_info_text}>❗</Text>
+            </View> */}
           </TouchableOpacity>
         ))}
-        </>
-      );
-    };
+      </>
+    );
+  };
 
   return (
-    <ImageBackground source={require('../assets/background.png')} style={styles.container} >
-      <View style={[styles.headerContainer,appStyles.top]}>
-        <TouchableOpacity style={styles.menuContainer} onPress={() => navigation.navigate('Drawer')}>
-          <Image source={require('../assets/menu.png')} style={styles.menu}/>
+    <ImageBackground
+      source={require('../assets/background.png')}
+      style={styles.container}>
+      <View style={[styles.headerContainer, appStyles.top]}>
+        <TouchableOpacity
+          style={styles.menuContainer}
+          onPress={() => navigation.navigate('Drawer')}>
+          <Image source={require('../assets/menu.png')} style={styles.menu} />
         </TouchableOpacity>
         <Text style={[styles.hi, appStyles.inverseText]}>Hi,</Text>
         <Text style={[styles.name, appStyles.colorText]}>{userToken.name}</Text>
         <View style={[styles.searchContainer, appStyles.containerBack]}>
-          <Image source={require('../assets/search.png')} style={styles.search}/>
-          <TextInput placeholderTextColor={appStyles.text.color} placeholder='Search' style={[styles.input, appStyles.text]} onChangeText={(text) => setSearchText(text)} value={searchText}/>
+          <Image
+            source={require('../assets/search.png')}
+            style={styles.search}
+          />
+          <TextInput
+            placeholderTextColor={appStyles.text.color}
+            placeholder="Search"
+            style={[styles.input, appStyles.text]}
+            onChangeText={text => setSearchText(text)}
+            value={searchText}
+          />
         </View>
       </View>
-      { !userToken.favorites && !userToken.recent (
-        <View style={[appStyles.container, { alignItems: 'center', justifyContent: 'center',  marginTop: -90}]}>
-          <Text style={[appStyles.text, {fontSize: 17, letterSpacing: 3}]}>No Recent Calls</Text>
-        </View>
-      )}
+      {!userToken.favorites &&
+        !userToken.recent(
+          <View
+            style={[
+              appStyles.container,
+              {alignItems: 'center', justifyContent: 'center', marginTop: -90},
+            ]}>
+            <Text style={[appStyles.text, {fontSize: 17, letterSpacing: 3}]}>
+              No Recent Calls
+            </Text>
+          </View>,
+        )}
       <ScrollView style={styles.bodyContainer}>
-        {userToken.favorites && !searchText && (
+        {userToken.favorites.length > 0 && !searchText && (
           <View style={styles.favoritesContainer}>
             <View style={styles.heading}>
-              <Text style={[styles.headingText, appStyles.text]}>Favorites</Text>
-              <Text style={[styles.headingEdit, appStyles.text]}>Edit {'>'}</Text>
+              <Text style={[styles.headingText, appStyles.text]}>
+                Favorites
+              </Text>
+              <TouchableOpacity onPress={() => setIsEditing(prev => !prev)}>
+                <Text style={[styles.headingEdit, appStyles.text]}>
+                  Edit {'>'}
+                </Text>
+              </TouchableOpacity>
             </View>
-            <View style={[styles.renderFavContainer, appStyles.containerBack]}>
+            <View style={[styles.renderFavContainer, appStyles.background]}>
               {renderFavorites()}
             </View>
           </View>
         )}
-        {userToken.recent && !searchText && (
+        {userToken.recent.length > 0 && !searchText && (
           <View style={styles.recentContainer}>
             <View style={styles.heading}>
               <Text style={[styles.headingText, appStyles.text]}>Recent</Text>
-              <Text style={[styles.headingEdit, appStyles.text]}>History {'>'}</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('History')}>
+                <Text style={[styles.headingEdit, appStyles.text]}>
+                  History {'>'}
+                </Text>
+              </TouchableOpacity>
             </View>
-            <View>
-              {renderRecent()}
-            </View>
+            <View>{renderRecent()}</View>
           </View>
         )}
         <View style={styles.addPad}></View>
       </ScrollView>
     </ImageBackground>
   );
-};
-
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -151,7 +236,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: '#5163BF',
     marginBottom: 15,
-    marginTop: Platform.OS==='ios' ? -7 : -20,
+    marginTop: Platform.OS === 'ios' ? -7 : -20,
     fontWeight: 'bold',
   },
   searchContainer: {
@@ -195,7 +280,7 @@ const styles = StyleSheet.create({
   },
   headingEdit: {
     color: 'white',
-    textDecorationLine: 'underline', 
+    textDecorationLine: 'underline',
   },
   recentContainer: {
     width: '95%',
@@ -236,19 +321,36 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderColor: 'black',
     borderWidth: 1,
-    backgroundColor: '#D9D9D9'
+    backgroundColor: '#D9D9D9',
   },
   fav_name: {
     padding: 0,
   },
-  fav_profileImage:{
+  fav_profileImage: {
     height: '100%',
     width: '100%',
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'red',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  deleteText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   recent_container: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 15,
     borderWidth: 1,
@@ -306,4 +408,4 @@ const styles = StyleSheet.create({
   recent_info_text: {
     color: 'black',
   },
-})
+});

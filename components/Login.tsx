@@ -1,22 +1,34 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {useState, useEffect} from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
-import { StatusBar } from 'react-native';
-import { useStyle, useUser } from '../AppContext';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+  Image,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import {StatusBar} from 'react-native';
+import {useStyle, useUser} from '../AppContext';
 
-import { FIREBASE_AUTH, USES_REF } from '../FirebaseConfig';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { addDoc } from 'firebase/firestore';
+import {FIREBASE_AUTH, USES_REF} from '../FirebaseConfig';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from 'firebase/auth';
+import {addDoc} from 'firebase/firestore';
 
 interface LoginProps {
   onLogin: (email: string) => void;
   reset: () => void;
 }
 
-export default function Login({ onLogin,  reset }: LoginProps): JSX.Element {
-  const { appStyles, theme } = useStyle();
-  const { getUserData, addUserToData } = useUser();
+export default function Login({onLogin, reset}: LoginProps): JSX.Element {
+  const {appStyles, theme} = useStyle();
+  const {getUserData, addUserToData} = useUser();
   const users = getUserData();
 
   const [user, setUser] = useState({
@@ -30,32 +42,34 @@ export default function Login({ onLogin,  reset }: LoginProps): JSX.Element {
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus ] = useState('login');
+  const [status, setStatus] = useState('login');
   const auth = FIREBASE_AUTH;
 
   useEffect(() => {
     console.log(theme);
   }, [theme]);
 
-
   const handleAuthentication = () => {
     setLoading(true);
-      if (status === 'login') {
-        handleLogin();
-      } else {
-        handleSignup();
-      }
+    if (status === 'login') {
+      handleLogin();
+    } else {
+      handleSignup();
+    }
     setLoading(false);
   };
 
-  const handleLogin = async() => {
+  const handleLogin = async () => {
     if (user.email === '' || user.password === '') {
       showAlert('Error', 'Please fill all the fields');
       return;
     }
     try {
-      const response = await signInWithEmailAndPassword(auth, user.email, user.password);
-      showAlert('Signed In', response.user.email);
+      const response = await signInWithEmailAndPassword(
+        auth,
+        user.email,
+        user.password,
+      );
     } catch (error: any) {
       showAlert('error', error.message);
       return;
@@ -68,14 +82,20 @@ export default function Login({ onLogin,  reset }: LoginProps): JSX.Element {
       showAlert('Error', 'Passwords do not match');
       return;
     }
-    if (user.name === '' || user.email === '' || user.password === '' || user.confirmPassword === '' || user.type === '') {
+    if (
+      user.name === '' ||
+      user.email === '' ||
+      user.password === '' ||
+      user.confirmPassword === '' ||
+      user.type === ''
+    ) {
       showAlert('Error', 'Please fill all the fields');
       return;
     }
     handleAddUser();
   };
 
-  const handleAddUser = async() => {
+  const handleAddUser = async () => {
     const newUser = {
       email: user.email,
       password: user.password,
@@ -87,9 +107,12 @@ export default function Login({ onLogin,  reset }: LoginProps): JSX.Element {
       recent: [],
       setting: [], // Fix: Change 'setting' to an empty array
     };
-    addUserToData(newUser);
     try {
-      const response = await createUserWithEmailAndPassword(auth, user.email, user.password);
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        user.email,
+        user.password,
+      );
       const doc = await addDoc(USES_REF, {
         name: user.name,
         email: response.user.email,
@@ -102,11 +125,12 @@ export default function Login({ onLogin,  reset }: LoginProps): JSX.Element {
       showAlert('error', error.message);
       return;
     }
+    addUserToData(newUser);
     onLogin(user.email);
   };
 
   const showAlert = (title: string, message: any) => {
-    Alert.alert(title, message, [{ text: 'OK' }]);
+    Alert.alert(title, message, [{text: 'OK'}]);
   };
 
   return (
@@ -116,14 +140,18 @@ export default function Login({ onLogin,  reset }: LoginProps): JSX.Element {
       </View>
       <View style={styles.bodyContainer}>
         <TouchableOpacity onPress={reset}>
-          <Text style={[styles.title, appStyles.text]}>{status === 'login' ? 'Log in' : 'Sign up'}</Text>
+          <Text style={[styles.title, appStyles.text]}>
+            {status === 'login' ? 'Log in' : 'Sign up'}
+          </Text>
         </TouchableOpacity>
-        <Text style={[styles.textTitle, appStyles.colorText]}>Email Address</Text>
+        <Text style={[styles.textTitle, appStyles.colorText]}>
+          Email Address
+        </Text>
         <View style={styles.inputContainer}>
           <TextInput
             placeholder="Email ID"
             value={user.email}
-            onChangeText={(text) => setUser({ ...user, email: text })}
+            onChangeText={text => setUser({...user, email: text})}
             style={[styles.input, appStyles.text]}
             placeholderTextColor={appStyles.text}
           />
@@ -136,7 +164,7 @@ export default function Login({ onLogin,  reset }: LoginProps): JSX.Element {
             placeholder="Password"
             secureTextEntry={!showPassword}
             value={user.password}
-            onChangeText={(text) => setUser({ ...user, password: text })}
+            onChangeText={text => setUser({...user, password: text})}
             style={[styles.input, appStyles.text]}
           />
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
@@ -148,18 +176,26 @@ export default function Login({ onLogin,  reset }: LoginProps): JSX.Element {
           <>
             <Text style={[styles.textTitle, appStyles.colorText]}>Name</Text>
             <View style={styles.nameContainer}>
-              <TextInput style={[styles.input, appStyles.text]} placeholderTextColor={appStyles.text} placeholder="Name" value={user.name} onChangeText={(text) => setUser({ ...user, name: text })}/>
+              <TextInput
+                style={[styles.input, appStyles.text]}
+                placeholderTextColor={appStyles.text}
+                placeholder="Name"
+                value={user.name}
+                onChangeText={text => setUser({...user, name: text})}
+              />
               <Text>✅</Text>
             </View>
             <View style={styles.line} />
-            <Text style={[styles.textTitle, appStyles.colorText]}>Confirm Password</Text>
+            <Text style={[styles.textTitle, appStyles.colorText]}>
+              Confirm Password
+            </Text>
             <View style={styles.inputContainer}>
               <TextInput
                 placeholder="Confirm Password"
                 secureTextEntry={!showPassword}
                 value={user.confirmPassword}
                 placeholderTextColor={appStyles.text}
-                onChangeText={(text) => setUser({ ...user, confirmPassword: text })}
+                onChangeText={text => setUser({...user, confirmPassword: text})}
                 style={[styles.input, appStyles.text]}
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
@@ -167,24 +203,41 @@ export default function Login({ onLogin,  reset }: LoginProps): JSX.Element {
               </TouchableOpacity>
             </View>
             <View style={styles.line} />
-            <Text style={[styles.textTitle, appStyles.colorText]}>Type   <Text style={[styles.currentTypeContainer, appStyles.text]}> Currently: {user.type}</Text></Text>
+            <Text style={[styles.textTitle, appStyles.colorText]}>
+              Type{' '}
+              <Text style={[styles.currentTypeContainer, appStyles.text]}>
+                {' '}
+                Currently: {user.type}
+              </Text>
+            </Text>
             <View style={styles.typeContainer}>
-              <TouchableOpacity style={[styles.type, appStyles.colorBackground]} onPress={() => setUser({ ...user, type: 'Normal' })}>
+              <TouchableOpacity
+                style={[styles.type, appStyles.colorBackground]}
+                onPress={() => setUser({...user, type: 'Normal'})}>
                 <Text style={[styles.typeText, appStyles.text]}>Normal</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.type, appStyles.colorBackground]} onPress={() => setUser({ ...user, type: 'Specially-abled' })}>
-                <Text style={[styles.typeText, appStyles.text]}>Specially-abled</Text>
+              <TouchableOpacity
+                style={[styles.type, appStyles.colorBackground]}
+                onPress={() => setUser({...user, type: 'Specially-abled'})}>
+                <Text style={[styles.typeText, appStyles.text]}>
+                  Specially-abled
+                </Text>
               </TouchableOpacity>
             </View>
           </>
         )}
       </View>
       <View style={styles.btnContainerC}>
-        <TouchableOpacity onPress={handleAuthentication} style={[styles.btnContainer, appStyles.colorBackground]} disabled={loading}>
+        <TouchableOpacity
+          onPress={handleAuthentication}
+          style={[styles.btnContainer, appStyles.colorBackground]}
+          disabled={loading}>
           {loading ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text style={[styles.btn, appStyles.text]}>{status === 'login' ? 'Login' : 'Signup'}</Text>
+            <Text style={[styles.btn, appStyles.text]}>
+              {status === 'login' ? 'Login' : 'Signup'}
+            </Text>
           )}
         </TouchableOpacity>
       </View>
@@ -193,7 +246,11 @@ export default function Login({ onLogin,  reset }: LoginProps): JSX.Element {
           {status === 'login' ? (
             <Text>
               Don't have an account?{' '}
-              <TouchableOpacity onPress={() => {setStatus('signup'); console.log(user);}}>
+              <TouchableOpacity
+                onPress={() => {
+                  setStatus('signup');
+                  console.log(user);
+                }}>
                 <Text style={styles.accBtn}>Signup</Text>
               </TouchableOpacity>
             </Text>
@@ -234,7 +291,7 @@ const styles = StyleSheet.create({
     padding: 15,
     maxHeight: '70%',
   },
-  btnContainerC:{
+  btnContainerC: {
     height: '10%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -322,4 +379,3 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 });
-
