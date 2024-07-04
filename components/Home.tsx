@@ -177,7 +177,11 @@ export default function Home({onLogout, userToken}: HomeProps) {
   function CallDrawer({navigation}: any) {
     return (
       // <Text>CallHome</Text>
-      <DrawerScreen navigation={navigation} user={users} onLogout={onLogout} />
+      <DrawerScreen
+        navigation={navigation}
+        userToken={users}
+        onLogout={onLogout}
+      />
     );
   }
 

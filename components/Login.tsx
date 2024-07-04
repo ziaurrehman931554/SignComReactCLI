@@ -10,6 +10,7 @@ import {
   Image,
   ActivityIndicator,
   Alert,
+  Keyboard,
 } from 'react-native';
 import {StatusBar} from 'react-native';
 import {useStyle, useUser} from '../AppContext';
@@ -45,9 +46,28 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
   const [status, setStatus] = useState('login');
   const auth = FIREBASE_AUTH;
 
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
   useEffect(() => {
-    console.log(theme);
-  }, [theme]);
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // Update state when keyboard is shown
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // Update state when keyboard is hidden
+      },
+    );
+
+    // Cleanup listeners on unmount
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   const handleAuthentication = () => {
     setLoading(true);
@@ -227,43 +247,47 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
           </>
         )}
       </View>
-      <View style={styles.btnContainerC}>
-        <TouchableOpacity
-          onPress={handleAuthentication}
-          style={[styles.btnContainer, appStyles.colorBackground]}
-          disabled={loading}>
-          {loading ? (
-            <ActivityIndicator size="small" color="white" />
-          ) : (
-            <Text style={[styles.btn, appStyles.text]}>
-              {status === 'login' ? 'Login' : 'Signup'}
-            </Text>
-          )}
-        </TouchableOpacity>
-      </View>
-      <View style={styles.accountContainer}>
-        <Text style={styles.accText}>
-          {status === 'login' ? (
-            <Text>
-              Don't have an account?{' '}
-              <TouchableOpacity
-                onPress={() => {
-                  setStatus('signup');
-                  console.log(user);
-                }}>
-                <Text style={styles.accBtn}>Signup</Text>
-              </TouchableOpacity>
-            </Text>
-          ) : (
-            <Text>
-              Already have an account?{' '}
-              <TouchableOpacity onPress={() => setStatus('login')}>
-                <Text style={styles.accBtn}>Login</Text>
-              </TouchableOpacity>
-            </Text>
-          )}
-        </Text>
-      </View>
+      {!isKeyboardVisible && (
+        <View style={styles.btnContainerC}>
+          <TouchableOpacity
+            onPress={handleAuthentication}
+            style={[styles.btnContainer, appStyles.colorBackground]}
+            disabled={loading}>
+            {loading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text style={[styles.btn, appStyles.text]}>
+                {status === 'login' ? 'Login' : 'Signup'}
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
+      {!isKeyboardVisible && (
+        <View style={styles.accountContainer}>
+          <Text style={styles.accText}>
+            {status === 'login' ? (
+              <Text>
+                Don't have an account?{' '}
+                <TouchableOpacity
+                  onPress={() => {
+                    setStatus('signup');
+                    console.log(user);
+                  }}>
+                  <Text style={styles.accBtn}>Signup</Text>
+                </TouchableOpacity>
+              </Text>
+            ) : (
+              <Text>
+                Already have an account?{' '}
+                <TouchableOpacity onPress={() => setStatus('login')}>
+                  <Text style={styles.accBtn}>Login</Text>
+                </TouchableOpacity>
+              </Text>
+            )}
+          </Text>
+        </View>
+      )}
       <StatusBar />
     </View>
   );

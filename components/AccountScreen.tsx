@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     alignSelf: 'center',
-    zIndex: -1,
+    opacity: 0.4,
   },
   body: {
     display: 'flex',

@@ -27,7 +27,8 @@ export default function SettingsScreen({
   const navigationState = useNavigationState(state => state);
   const [isKBActive, setIsKBActive] = useState(false);
   const [hidePass, setHidePass] = useState(true);
-  const [selectedType, setSelectedType] = useState(false);
+  const [selectType, setSelectType] = useState(false);
+  const [selectedType, setSelectedType] = useState(userToken.type);
 
   const [user, setUser] = useState({
     Name: userToken.name,
@@ -82,15 +83,30 @@ export default function SettingsScreen({
 
   return (
     <View style={[styles.container, appStyles.background, appStyles.top]}>
-      <View style={{width: '100%'}}>
-        <Text>Current: {user.type}</Text>
-        <TouchableOpacity>
-          <Text>Normal</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text>Specially-abled</Text>
-        </TouchableOpacity>
-      </View>
+      {selectType && (
+        <View style={[styles.selectContainer]}>
+          <Text
+            style={[appStyles.text, styles.item, {backgroundColor: 'grey'}]}>
+            Current: <Text style={appStyles.colorText}>{user.type}</Text>
+          </Text>
+          <TouchableOpacity
+            style={[appStyles.containerBack, styles.item]}
+            onPress={() => {
+              handleInputChange('type', 'Normal');
+              setSelectType(false);
+            }}>
+            <Text style={[appStyles.text]}>Normal</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[appStyles.containerBack, styles.item]}
+            onPress={() => {
+              handleInputChange('type', 'Special');
+              setSelectType(false);
+            }}>
+            <Text style={[appStyles.text]}>Specially-abled</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <View style={[styles.backBTNContainer, appStyles.colorBackground]}>
@@ -167,7 +183,7 @@ export default function SettingsScreen({
           </View>
           <View style={[styles.entityContainer, appStyles.containerBack]}>
             <Text style={[styles.entityName, appStyles.colorText]}>Type</Text>
-            <TouchableOpacity onPress={setSelectType(true)}>
+            <TouchableOpacity onPress={() => setSelectType(true)}>
               <Text style={[styles.entityValue, appStyles.text]}>
                 {user.type}
               </Text>
@@ -224,6 +240,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     alignSelf: 'center',
     opacity: 0.4,
+    zIndex: -1,
   },
   bodyContainer: {
     display: 'flex',
@@ -326,5 +343,24 @@ const styles = StyleSheet.create({
   },
   save: {
     fontSize: 17,
+  },
+  selectContainer: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    zIndex: 10,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  item: {
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 10,
+    width: '90%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  KeyboardAvoidingView,
   ImageBackground,
 } from 'react-native';
 import {useStyle} from '../AppContext';
@@ -40,64 +41,68 @@ export default function CallScreen({navigation}: CallScreenProps) {
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/background.png')}
-      style={[appStyles.container, appStyles.top]}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <View style={[styles.backContainer, appStyles.colorBackground]}>
-            <Text style={[styles.back, appStyles.text]}>🔙</Text>
+    <KeyboardAvoidingView style={styles.container}>
+      <ImageBackground
+        source={require('../assets/background.png')}
+        style={[appStyles.container, appStyles.top]}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <View style={[styles.backContainer, appStyles.colorBackground]}>
+              <Text style={[styles.back, appStyles.text]}>🔙</Text>
+            </View>
+          </TouchableOpacity>
+          <Text style={styles.headerText}>Make a Call</Text>
+        </View>
+        <View style={styles.joinContainer}>
+          <Text style={styles.title}>Join Existing Channel</Text>
+          <View style={[styles.imgContainer, appStyles.containerBack]}>
+            <Image source={require('../assets/join.png')} style={styles.img} />
           </View>
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Make a Call</Text>
-      </View>
-      <View style={styles.joinContainer}>
-        <Text style={styles.title}>Join Existing Channel</Text>
-        <View style={[styles.imgContainer, appStyles.containerBack]}>
-          <Image source={require('../assets/join.png')} style={styles.img} />
+          <TextInput
+            style={[styles.input, appStyles.containerBack, appStyles.text]}
+            placeholderTextColor={appStyles.text.color}
+            placeholder="Enter Channel Name"
+            value={joinID}
+            onChangeText={Text => {
+              setJoinId(Text);
+            }}
+          />
+          <TouchableOpacity
+            style={[styles.btn, appStyles.colorBackground]}
+            onPress={HandleJoin}>
+            <Text style={[styles.btnText, appStyles.text]}>
+              Join {u && <Text>{u}</Text>}
+            </Text>
+          </TouchableOpacity>
         </View>
-        <TextInput
-          style={[styles.input, appStyles.containerBack, appStyles.text]}
-          placeholderTextColor={appStyles.text.color}
-          placeholder="Enter Channel Name"
-          value={joinID}
-          onChangeText={Text => {
-            setJoinId(Text);
-          }}
-        />
-        <TouchableOpacity
-          style={[styles.btn, appStyles.colorBackground]}
-          onPress={HandleJoin}>
-          <Text style={[styles.btnText, appStyles.text]}>
-            Join {u && <Text>{u}</Text>}
+        <View style={styles.line}></View>
+        <View style={styles.joinContainer}>
+          <Text style={styles.title}>
+            Generate New Channel {u && <Text>for {u}</Text>}
           </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.line}></View>
-      <View style={styles.joinContainer}>
-        <Text style={styles.title}>
-          Generate New Channel {u && <Text>for {u}</Text>}
-        </Text>
-        <View style={[styles.imgContainer, appStyles.containerBack]}>
-          <Image source={require('../assets/join.png')} style={styles.img} />
+          <View style={[styles.imgContainer, appStyles.containerBack]}>
+            <Image source={require('../assets/join.png')} style={styles.img} />
+          </View>
+          <TextInput
+            style={[styles.input, appStyles.containerBack, appStyles.text]}
+            placeholderTextColor={appStyles.text.color}
+            placeholder="Enter New Channel Name"
+            value={generateID}
+            onChangeText={Text => {
+              setGenerateId(Text);
+            }}
+          />
+          <TouchableOpacity
+            style={[styles.btn, appStyles.colorBackground]}
+            onPress={HandleJoin}>
+            <Text style={[styles.btnText, appStyles.text]}>
+              Generate & Join
+            </Text>
+          </TouchableOpacity>
         </View>
-        <TextInput
-          style={[styles.input, appStyles.containerBack, appStyles.text]}
-          placeholderTextColor={appStyles.text.color}
-          placeholder="Enter New Channel Name"
-          value={generateID}
-          onChangeText={Text => {
-            setGenerateId(Text);
-          }}
-        />
-        <TouchableOpacity
-          style={[styles.btn, appStyles.colorBackground]}
-          onPress={HandleJoin}>
-          <Text style={[styles.btnText, appStyles.text]}>Generate & Join</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.addPad}></View>
-    </ImageBackground>
+        <View style={styles.addPad}></View>
+      </ImageBackground>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -105,6 +110,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
+    height: '100%',
   },
   addPad: {
     width: '100%',

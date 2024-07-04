@@ -1,18 +1,29 @@
-import React, { useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Animated, Easing } from 'react-native';
-import { useStyle } from '../AppContext';
-import { useIsFocused } from '@react-navigation/native';
-
+import React, {useRef, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Animated,
+  Easing,
+} from 'react-native';
+import {useStyle} from '../AppContext';
+import {useIsFocused} from '@react-navigation/native';
 
 interface DrawerScreenProps {
-  user: any;
+  userToken: any;
   navigation: any;
   onLogout: () => void;
 }
 
-export default function DrawerScreen({navigation, user, onLogout}: DrawerScreenProps) {
-  const { appStyles, theme, toggleTheme } = useStyle();
-  const u = user ? user.name : '';
+export default function DrawerScreen({
+  navigation,
+  userToken,
+  onLogout,
+}: DrawerScreenProps) {
+  const {appStyles, theme, toggleTheme} = useStyle();
+  const u = userToken ? userToken.name : '';
   const isFocused = useIsFocused();
   const fadeIn = useRef(new Animated.Value(0)).current;
   const slideIn = useRef(new Animated.Value(-270)).current;
@@ -57,43 +68,80 @@ export default function DrawerScreen({navigation, user, onLogout}: DrawerScreenP
     Animated.parallel([fadeOutAnimation, slideOutAnimation]).start();
     setTimeout(() => {
       navigation.navigate('Home');
-    }, 500)
+    }, 500);
   };
 
   return (
-    <Animated.View style={[styles.container, appStyles.top, { backgroundColor: fadeIn.interpolate({
-        inputRange: [0, 1],
-        outputRange: theme === 'light'
-          ? ['rgba(200, 200, 230, 0)', 'rgba(200, 200, 230, 0.6)']
-          : ['rgba(50, 50, 50, 0.2)', 'rgba(30, 30, 30, 0.8)',]
-      }) }]}>
-      <Animated.View style={[styles.containerS, theme === 'dark' ? appStyles.background : appStyles.containerBack, { transform: [{ translateX: slideIn }] }]}>
-        <TouchableOpacity style={[styles.backContainer, appStyles.containerBack]} onPress={handleCloseDrawer}>
+    <Animated.View
+      style={[
+        styles.container,
+        appStyles.top,
+        {
+          backgroundColor: fadeIn.interpolate({
+            inputRange: [0, 1],
+            outputRange:
+              theme === 'light'
+                ? ['rgba(200, 200, 230, 0)', 'rgba(200, 200, 230, 0.6)']
+                : ['rgba(50, 50, 50, 0.2)', 'rgba(30, 30, 30, 0.8)'],
+          }),
+        },
+      ]}>
+      <Animated.View
+        style={[
+          styles.containerS,
+          theme === 'dark' ? appStyles.background : appStyles.containerBack,
+          {transform: [{translateX: slideIn}]},
+        ]}>
+        <TouchableOpacity
+          style={[styles.backContainer, appStyles.containerBack]}
+          onPress={handleCloseDrawer}>
           <Text style={styles.back}>❌</Text>
         </TouchableOpacity>
         <View style={styles.profileContainer}>
           <View style={styles.profileImgContainer}>
-            <Image style={styles.profileImg} source={require('../assets/Profile.png')} />
+            <Image
+              style={styles.profileImg}
+              source={require('../assets/Profile.png')}
+            />
           </View>
           <View style={[styles.profileNameContainer, appStyles.containerBack]}>
             <Text style={[styles.profileName, appStyles.text]}>{u}</Text>
           </View>
         </View>
         <View style={styles.itemsContainer}>
-          <TouchableOpacity style={[styles.itemContainer, appStyles.containerBack]} onPress={() => navigation.navigate('Account')}>
-            <Text style={[styles.item, appStyles.text]}>🥷   Profile</Text>
+          <TouchableOpacity
+            style={[styles.itemContainer, appStyles.containerBack]}
+            onPress={() => navigation.navigate('Account')}>
+            <Text style={[styles.item, appStyles.text]}>🥷 Profile</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.itemContainer, appStyles.containerBack]} onPress={() => navigation.navigate('About')}>
-            <Text style={[styles.item, appStyles.text]}>ℹ️   About</Text>
+          <TouchableOpacity
+            style={[styles.itemContainer, appStyles.containerBack]}
+            onPress={() => navigation.navigate('About')}>
+            <Text style={[styles.item, appStyles.text]}>ℹ️ About</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.itemContainer, appStyles.containerBack]} onPress={() => navigation.navigate('Settings')}>
-            <Text style={[styles.item, appStyles.text]}>⚙️   Settings</Text>
+          <TouchableOpacity
+            style={[styles.itemContainer, appStyles.containerBack]}
+            onPress={() => navigation.navigate('Settings')}>
+            <Text style={[styles.item, appStyles.text]}>⚙️ Settings</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => {toggleTheme()}} style={[appStyles.containerBack, styles.logoutContainer, {bottom: 100,}]}>
-          <Text style={appStyles.text}>Turn Dark Mode {theme === 'dark'? <Text>off</Text> : <Text>on</Text> }</Text>
+        <TouchableOpacity
+          onPress={() => {
+            toggleTheme();
+          }}
+          style={[
+            appStyles.containerBack,
+            styles.logoutContainer,
+            {bottom: 100},
+          ]}>
+          <Text style={appStyles.text}>
+            Turn Dark Mode{' '}
+            {theme === 'dark' ? <Text>off</Text> : <Text>on</Text>}
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={onLogout} style={[styles.logoutContainer, appStyles.colorBackground]}>
+        <TouchableOpacity
+          onPress={onLogout}
+          style={[styles.logoutContainer, appStyles.colorBackground]}>
           <Text style={styles.logoutImage}>📴</Text>
           <Text style={appStyles.text}>Log Out</Text>
         </TouchableOpacity>
@@ -142,7 +190,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 5,
-    backgroundColor: '#D5F2F9'
+    backgroundColor: '#D5F2F9',
   },
   profileImg: {
     height: 140,
