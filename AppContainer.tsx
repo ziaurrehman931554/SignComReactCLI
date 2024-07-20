@@ -1,14 +1,15 @@
 /* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
-import { useStyle } from './AppContext';
+import React, {useState, useEffect} from 'react';
+import {useStyle} from './AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View } from 'react-native';
-import { StatusBar } from 'react-native';
+import {View} from 'react-native';
+import {StatusBar} from 'react-native';
 import OnBoardingScreen from './components/OnBoardingScreen';
 import MainApp from './components/MainApp';
+import {AuthProvider} from './AuthProvider';
 
 export default function AppContainer() {
-  const { appStyles } = useStyle();
+  const {appStyles} = useStyle();
   const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
 
   useEffect(() => {
@@ -42,13 +43,15 @@ export default function AppContainer() {
   };
 
   return (
-    <View style={[appStyles.background, appStyles.container]}>
-      {showOnboarding ? (
-        <OnBoardingScreen onComplete={handleOnboardingComplete} />
-      ) : (
-        <MainApp reset={handleReset} />
-      )}
-      <StatusBar barStyle={'default'} />
-    </View>
+    <AuthProvider>
+      <View style={[appStyles.background, appStyles.container]}>
+        {showOnboarding ? (
+          <OnBoardingScreen onComplete={handleOnboardingComplete} />
+        ) : (
+          <MainApp reset={handleReset} />
+        )}
+        <StatusBar barStyle={'default'} />
+      </View>
+    </AuthProvider>
   );
 }

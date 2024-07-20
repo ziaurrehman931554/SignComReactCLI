@@ -91,10 +91,19 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
         user.password,
       );
     } catch (error: any) {
-      showAlert('error', error.message);
+      showAlert('Error', displayErrorShort(error));
       return;
     }
     onLogin(user.email);
+  };
+
+  const displayErrorShort = (error: any) => {
+    const errorMessage = error.message.match(/auth\/([^).]+)/);
+    const rawMessage = errorMessage
+      ? errorMessage[1]
+      : 'Unknown error occurred';
+    const displayMessage = rawMessage.replace(/[-_]/g, ' ');
+    return displayMessage;
   };
 
   const handleSignup = () => {
@@ -139,10 +148,9 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
         uid: response.user.uid,
         type: user.type,
       });
-      console.log('doc', doc.id);
       showAlert('Signed up with ', response.user.email);
     } catch (error: any) {
-      showAlert('error', error.message);
+      showAlert('error', displayErrorShort(error));
       return;
     }
     addUserToData(newUser);
@@ -171,6 +179,7 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
           <TextInput
             placeholder="Email ID"
             value={user.email}
+            autoCapitalize="none"
             onChangeText={text => setUser({...user, email: text})}
             style={[styles.input, appStyles.text]}
             placeholderTextColor={appStyles.text}
@@ -184,6 +193,7 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
             placeholder="Password"
             secureTextEntry={!showPassword}
             value={user.password}
+            autoCapitalize="none"
             onChangeText={text => setUser({...user, password: text})}
             style={[styles.input, appStyles.text]}
           />
@@ -214,6 +224,7 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
                 placeholder="Confirm Password"
                 secureTextEntry={!showPassword}
                 value={user.confirmPassword}
+                autoCapitalize="none"
                 placeholderTextColor={appStyles.text}
                 onChangeText={text => setUser({...user, confirmPassword: text})}
                 style={[styles.input, appStyles.text]}
@@ -272,7 +283,6 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
                 <TouchableOpacity
                   onPress={() => {
                     setStatus('signup');
-                    console.log(user);
                   }}>
                   <Text style={styles.accBtn}>Signup</Text>
                 </TouchableOpacity>

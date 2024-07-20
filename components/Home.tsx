@@ -19,7 +19,7 @@ import HomeScreen from './HomeScreen';
 import CallScreen from './CallScreen';
 import HistoryScreen from './HistoryScreen';
 import AccountScreen from './AccountScreen';
-import CallingScreens from './CallingScreens';
+import CallingScreen from './CallingScreen';
 import SettingsScreen from './SettingsScreen';
 import AboutScreen from './AboutScreen';
 import DrawerScreen from './DrawerScreen';
@@ -194,7 +194,7 @@ export default function Home({onLogout, userToken}: HomeProps) {
     console.log(route);
     return (
       // <Text>CallHome</Text>
-      <CallingScreens
+      <CallingScreen
         navigation={navigation}
         userToken={users}
         route={route}
