@@ -32,16 +32,11 @@ export default function HistoryScreen({
   const {updateUserByEmail} = useUser();
   const [isEditing, setIsEditing] = useState(false);
 
-  const knownFormats = [
-    'M/d/yyyy, h:mm:ss a', // Example format for "8/3/2024, 11:52:17 AM"
-    'yyyy-MM-ddTHH:mm:ssZ', // ISO format
-  ];
+  const knownFormats = ['M/d/yyyy, h:mm:ss a', 'yyyy-MM-ddTHH:mm:ssZ'];
 
   const formatDate = (dateString: string) => {
-    console.log('-------------------called for: ', dateString);
     let date;
 
-    // Try to parse the dateString with known formats
     for (const formatString of knownFormats) {
       try {
         date = parse(dateString, formatString, new Date());
@@ -53,32 +48,22 @@ export default function HistoryScreen({
       }
     }
 
-    if (isValid(date)) console.log('---------------format valid');
-    else console.log('------------------------format invalid');
-
-    // Check if date is valid
     if (date && isValid(date)) {
       if (isToday(date)) {
-        console.log('------------------returning today');
         return `Today at ${format(date, 'h:mm a')}`;
       }
 
       if (isYesterday(date)) {
-        console.log('------------------returning yesterday');
         return `Yesterday at ${format(date, 'h:mm a')}`;
       }
 
       if (isThisWeek(date)) {
-        console.log('------------------returning this week');
-        return format(date, 'EEEE'); // Weekday name
+        return format(date, 'EEEE');
       }
 
-      console.log('------------------returning default');
-      return format(date, 'M/d/yyyy, h:mm a'); // Default format
+      return format(date, 'M/d/yyyy, h:mm a');
     }
 
-    // Return the original string if it's not a valid date
-    console.log('------------------returning original');
     return dateString;
   };
 

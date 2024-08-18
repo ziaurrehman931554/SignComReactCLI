@@ -23,7 +23,6 @@ const HandGestureDetection = ({onResults}: HandGestureDetectionProps) => {
     const loadModel = async () => {
       await tf.ready();
       const handposeModel = await handpose.load();
-      console.log(handposeModel);
       setModel(handposeModel);
     };
 
@@ -31,22 +30,11 @@ const HandGestureDetection = ({onResults}: HandGestureDetectionProps) => {
   }, []);
 
   const handleCameraStream = async (camera: any) => {
-    console.log('camera ready');
-    console.log('---------------------');
-    console.log(camera);
-    console.log('---------------------');
-    console.log(model);
     if (!camera || !model) return;
 
     const {uri} = await camera.takePictureAsync({base64: true});
-    console.log('-----------------------');
-    console.log(uri);
     const image = await tf.browser.fromPixelsAsync({uri});
-    console.log('--------------------------');
-    console.log(image);
     const predictions = await model.estimateHands(image);
-    console.log('--------------------------');
-    console.log(predictions);
     onResults(predictions);
   };
 

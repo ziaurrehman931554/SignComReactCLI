@@ -38,30 +38,19 @@ export default function Home({onLogout, userToken}: HomeProps) {
   const users: any = findUserByEmail(userToken);
 
   function CallHome({navigation}: any) {
-    return (
-      // <Text>CallHome</Text>
-      <HomeScreen userToken={users} navigation={navigation} />
-    );
+    return <HomeScreen userToken={users} navigation={navigation} />;
   }
 
   function CallCall({navigation, route}: any) {
-    return (
-      // <Text>CallHome</Text>
-      // <CallingScreens navigation={navigation} userToken={users} route={route} />
-      <CallScreen navigation={navigation} />
-    );
+    return <CallScreen navigation={navigation} />;
   }
 
   function CallHistory({navigation}: any) {
-    return (
-      // <Text>CallHome</Text>
-      <HistoryScreen userToken={users} navigation={navigation} />
-    );
+    return <HistoryScreen userToken={users} navigation={navigation} />;
   }
 
   function CallAccount({navigation}: any) {
     return (
-      // <Text>CallHome</Text>
       <AccountScreen
         userToken={users}
         onLogout={onLogout}
@@ -71,10 +60,7 @@ export default function Home({onLogout, userToken}: HomeProps) {
   }
 
   function CallSetting({navigation}: any) {
-    return (
-      // <Text>CallHome</Text>
-      <SettingsScreen userToken={users} navigation={navigation} />
-    );
+    return <SettingsScreen userToken={users} navigation={navigation} />;
   }
 
   function MainScreen() {
@@ -175,7 +161,6 @@ export default function Home({onLogout, userToken}: HomeProps) {
 
   function CallDrawer({navigation}: any) {
     return (
-      // <Text>CallHome</Text>
       <DrawerScreen
         navigation={navigation}
         userToken={users}
@@ -187,8 +172,8 @@ export default function Home({onLogout, userToken}: HomeProps) {
   function handleTime(startTime: number, duration: number, id: string) {
     const startDate = new Date(startTime);
 
-    const minutes = Math.floor(duration / 60000); // 60,000 ms in a minute
-    const seconds = Math.floor((duration % 60000) / 1000); // remaining seconds
+    const minutes = Math.floor(duration / 60000);
+    const seconds = Math.floor((duration % 60000) / 1000);
     const callDuration = `${minutes}M:${seconds}S`;
     const recentCallData = {
       Name: id,
@@ -201,9 +186,7 @@ export default function Home({onLogout, userToken}: HomeProps) {
   }
 
   function CallCalling({navigation, route}: any) {
-    console.log(route);
     return (
-      // <Text>CallHome</Text>
       <CallingScreen
         navigation={navigation}
         userToken={users}
@@ -214,10 +197,7 @@ export default function Home({onLogout, userToken}: HomeProps) {
   }
 
   function CallAbout({navigation}: any) {
-    return (
-      // <Text>CallHome</Text>
-      <AboutScreen navigation={navigation} />
-    );
+    return <AboutScreen navigation={navigation} />;
   }
 
   function MainNavigator() {
@@ -259,8 +239,5 @@ export default function Home({onLogout, userToken}: HomeProps) {
     );
   }
 
-  return (
-    // <Text>abc</Text>
-    <>{<MainNavigator />}</>
-  );
+  return <>{<MainNavigator />}</>;
 }

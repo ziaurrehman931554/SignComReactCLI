@@ -56,7 +56,6 @@ const OnBoardingScreen: React.FC<OnBoardingScreenProps> = ({onComplete}) => {
   const {appStyles, theme, toggleAppColor} = useStyle();
 
   useEffect(() => {
-    console.log(theme);
     Animated.spring(scrollX, {
       toValue: activeIndex * Dimensions.get('window').width,
       useNativeDriver: true,

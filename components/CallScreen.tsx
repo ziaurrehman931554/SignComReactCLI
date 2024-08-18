@@ -32,7 +32,6 @@ export default function CallScreen({navigation}: CallScreenProps) {
   const [joinID, setJoinId] = useState('');
 
   const HandleJoin = () => {
-    console.log(generateID, joinID);
     if (joinID === '') {
       navigation.navigate('MakeCall', {id: generateID});
     } else {

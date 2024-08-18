@@ -24,9 +24,7 @@ export default function CallingScreen({
   let startTime: number | null = null;
 
   useEffect(() => {
-    console.log(id);
     setUrl(`${url}/via/${id}/${option}`);
-    console.log(`${url}/via/${id}/${option}`);
     setChannelName(id);
     setHandleSwitch(true);
   }, [id]);
@@ -37,8 +35,6 @@ export default function CallingScreen({
 
       if (currentUrl.startsWith('https://192.168.100.3/via/')) {
         if (startTime == null) startTime = new Date().getTime();
-        console.log(startTime);
-        console.log(currentUrl);
       } else {
         if (startTime !== null) {
           const endTime = new Date().getTime();
@@ -80,8 +76,6 @@ export default function CallingScreen({
 
     if (currentUrl.startsWith('https://192.168.100.3/via/')) {
       if (startTime == null) startTime = new Date().getTime();
-      console.log(startTime);
-      console.log(currentUrl);
     } else if (currentUrl === 'https://192.168.100.3/') {
       if (startTime !== null) {
         const endTime = new Date().getTime();

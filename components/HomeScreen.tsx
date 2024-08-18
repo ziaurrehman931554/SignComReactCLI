@@ -77,7 +77,6 @@ export default function HomeScreen({userToken, navigation}: HomeScreenProps) {
         (item: any) => item.Name !== name,
       );
       updateUserByEmail(userToken.email, {favorites: updatedFavorites});
-      console.log(userToken.favorites);
     };
     return (
       <ScrollView
