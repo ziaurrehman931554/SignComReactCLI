@@ -86,7 +86,7 @@ export default function SettingsScreen({
       {selectType && (
         <View style={[styles.selectContainer]}>
           <Text
-            style={[appStyles.text, styles.item, {backgroundColor: 'grey'}]}>
+            style={[styles.item, {backgroundColor: 'grey', color: 'white'}]}>
             Current: <Text style={appStyles.colorText}>{user.type}</Text>
           </Text>
           <TouchableOpacity
@@ -110,7 +110,14 @@ export default function SettingsScreen({
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <View style={[styles.backBTNContainer, appStyles.colorBackground]}>
-            <Text>🔙</Text>
+            <Image
+              source={
+                theme === 'light'
+                  ? require('../assets/back_w.png')
+                  : require('../assets/back_b.png')
+              }
+              style={styles.back}
+            />
           </View>
         </TouchableOpacity>
         <Text style={[styles.headerText, appStyles.text]}>Settings</Text>
@@ -135,7 +142,7 @@ export default function SettingsScreen({
                   : appStyles.colorBackground,
               ]}>
               <Image
-                source={require('../assets/edit.png')}
+                source={require('../assets/edit_pen.png')}
                 style={styles.edit}
               />
             </View>
@@ -157,8 +164,8 @@ export default function SettingsScreen({
           <View style={[styles.entityContainer, appStyles.containerBack]}>
             <Text style={[styles.entityName, appStyles.colorText]}>Email</Text>
             <TextInput
-              style={styles.entityValue}
-              placeholderTextColor={appStyles.text.color}
+              style={[styles.entityValue, appStyles.text]}
+              placeholderTextColor={appStyles.text}
               placeholder="Enter Your email"
               value={user.email}
               onChangeText={text =>
@@ -166,11 +173,25 @@ export default function SettingsScreen({
               }></TextInput>
           </View>
           <View style={[styles.entityContainer, appStyles.containerBack]}>
-            <TouchableOpacity onPress={togglePasswordVisibility}>
+            <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
               <Text style={[styles.entityName, appStyles.colorText]}>
                 Password
               </Text>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={togglePasswordVisibility}>
+                <Image
+                  source={
+                    hidePass
+                      ? theme === 'light'
+                        ? require('../assets/pass_show_b.png')
+                        : require('../assets/pass_show_w.png')
+                      : theme === 'light'
+                      ? require('../assets/pass_hide_b.png')
+                      : require('../assets/pass_hide_w.png')
+                  }
+                  style={styles.passIcon}
+                />
+              </TouchableOpacity>
+            </View>
             <TextInput
               style={[styles.entityValue, appStyles.text]}
               placeholderTextColor={appStyles.text}
@@ -184,7 +205,7 @@ export default function SettingsScreen({
           <View style={[styles.entityContainer, appStyles.containerBack]}>
             <Text style={[styles.entityName, appStyles.colorText]}>Type</Text>
             <TouchableOpacity onPress={() => setSelectType(true)}>
-              <Text style={[styles.entityValue, appStyles.text]}>
+              <Text style={[styles.typeEntryValue, appStyles.text]}>
                 {user.type}
               </Text>
             </TouchableOpacity>
@@ -253,6 +274,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+  },
+  passIcon: {
+    height: 20,
+    width: 20,
+    alignSelf: 'center',
+  },
+  back: {
+    height: 27,
+    width: 27,
+    padding: 0,
   },
   YPI: {
     fontSize: 15,
@@ -332,6 +363,15 @@ const styles = StyleSheet.create({
     width: 200,
     opacity: 0.7,
   },
+  typeEntryValue: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 12,
+    textAlign: 'right',
+    width: 200,
+    opacity: 0.7,
+  },
   saveContainer: {
     height: 60,
     width: 175,
@@ -345,10 +385,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   selectContainer: {
+    flex: 1,
     position: 'absolute',
-    height: '100%',
+    height: '110%',
     width: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     zIndex: 10,
     display: 'flex',
     justifyContent: 'center',
@@ -362,5 +403,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
   },
 });

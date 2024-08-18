@@ -31,6 +31,8 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
   const {appStyles, theme} = useStyle();
   const {getUserData, addUserToData} = useUser();
   const users = getUserData();
+  const [showNameTick, setShowNameTick] = useState(false);
+  const [showEmailTick, setShowEmailTick] = useState(false);
 
   const [user, setUser] = useState({
     email: '',
@@ -184,7 +186,11 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
             style={[styles.input, appStyles.text]}
             placeholderTextColor={appStyles.text}
           />
-          <Text>✅</Text>
+          {user.email.length > 0 && user.email.includes('@') ? (
+            <Text>✅</Text>
+          ) : (
+            <Text style={{opacity: 0}}>✅</Text>
+          )}
         </View>
         <View style={styles.line} />
         <Text style={[styles.textTitle, appStyles.colorText]}>Password</Text>
@@ -198,14 +204,21 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
             style={[styles.input, appStyles.text]}
           />
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Text>{showPassword ? '🔴' : '🟢'}</Text>
+            <Image
+              source={
+                !showPassword
+                  ? require('../assets/pass_show_w.png')
+                  : require('../assets/pass_hide_w.png')
+              }
+              style={styles.passImg}
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.line} />
         {status === 'signup' && (
           <>
             <Text style={[styles.textTitle, appStyles.colorText]}>Name</Text>
-            <View style={styles.nameContainer}>
+            <View style={styles.inputContainer}>
               <TextInput
                 style={[styles.input, appStyles.text]}
                 placeholderTextColor={appStyles.text}
@@ -213,7 +226,11 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
                 value={user.name}
                 onChangeText={text => setUser({...user, name: text})}
               />
-              <Text>✅</Text>
+              {user.name.length > 0 ? (
+                <Text>✅</Text>
+              ) : (
+                <Text style={{opacity: 0}}>✅</Text>
+              )}
             </View>
             <View style={styles.line} />
             <Text style={[styles.textTitle, appStyles.colorText]}>
@@ -230,7 +247,14 @@ export default function Login({onLogin, reset}: LoginProps): JSX.Element {
                 style={[styles.input, appStyles.text]}
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Text>{showPassword ? '🔴' : '🟢'}</Text>
+                <Image
+                  source={
+                    !showPassword
+                      ? require('../assets/pass_show_w.png')
+                      : require('../assets/pass_hide_w.png')
+                  }
+                  style={styles.passImg}
+                />
               </TouchableOpacity>
             </View>
             <View style={styles.line} />
@@ -381,6 +405,11 @@ const styles = StyleSheet.create({
   input: {
     width: '90%',
     padding: 5,
+    borderWidth: 0,
+    margin: 0,
+    backgroundColor: 'transparent',
+    shadowOpacity: 0,
+    alignSelf: 'center',
   },
   line: {
     width: '95%',
@@ -395,6 +424,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+  },
+  passImg: {
+    height: 20,
+    width: 20,
+    marginLeft: 10,
   },
   type: {
     alignItems: 'center',
@@ -411,5 +445,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+    width: '100%',
+    // borderWidth: 1,
   },
 });

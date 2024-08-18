@@ -95,7 +95,10 @@ export default function DrawerScreen({
         <TouchableOpacity
           style={[styles.backContainer, appStyles.containerBack]}
           onPress={handleCloseDrawer}>
-          <Text style={styles.back}>❌</Text>
+          <Image
+            style={styles.back}
+            source={require('../assets/cancel_r.png')}
+          />
         </TouchableOpacity>
         <View style={styles.profileContainer}>
           <View style={styles.profileImgContainer}>
@@ -112,17 +115,47 @@ export default function DrawerScreen({
           <TouchableOpacity
             style={[styles.itemContainer, appStyles.containerBack]}
             onPress={() => navigation.navigate('Account')}>
-            <Text style={[styles.item, appStyles.text]}>🥷 Profile</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Image
+                source={
+                  theme === 'light'
+                    ? require('../assets/user_b.png')
+                    : require('../assets/user_w.png')
+                }
+                style={styles.itemImg}
+              />
+              <Text style={[styles.item, appStyles.text]}> Profile</Text>
+            </View>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.itemContainer, appStyles.containerBack]}
             onPress={() => navigation.navigate('About')}>
-            <Text style={[styles.item, appStyles.text]}>ℹ️ About</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Image
+                source={
+                  theme === 'light'
+                    ? require('../assets/info_b.png')
+                    : require('../assets/info_w.png')
+                }
+                style={styles.itemImg}
+              />
+              <Text style={[styles.item, appStyles.text]}> About</Text>
+            </View>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.itemContainer, appStyles.containerBack]}
             onPress={() => navigation.navigate('Settings')}>
-            <Text style={[styles.item, appStyles.text]}>⚙️ Settings</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Image
+                source={
+                  theme === 'light'
+                    ? require('../assets/setting_b.png')
+                    : require('../assets/setting_w.png')
+                }
+                style={styles.itemImg}
+              />
+              <Text style={[styles.item, appStyles.text]}> Settings</Text>
+            </View>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
@@ -142,7 +175,10 @@ export default function DrawerScreen({
         <TouchableOpacity
           onPress={onLogout}
           style={[styles.logoutContainer, appStyles.colorBackground]}>
-          <Text style={styles.logoutImage}>📴</Text>
+          <Image
+            style={styles.logoutImage}
+            source={require('../assets/logout_b.png')}
+          />
           <Text style={appStyles.text}>Log Out</Text>
         </TouchableOpacity>
       </Animated.View>
@@ -170,12 +206,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 5,
   },
+  itemImg: {
+    height: 25,
+    width: 25,
+  },
   back: {
     height: 30,
     width: 30,
-    alignSelf: 'center',
-    textAlign: 'center',
-    fontSize: 20,
   },
   profileContainer: {
     height: 250,
@@ -240,5 +277,7 @@ const styles = StyleSheet.create({
   },
   logoutImage: {
     marginHorizontal: 5,
+    height: 20,
+    width: 20,
   },
 });

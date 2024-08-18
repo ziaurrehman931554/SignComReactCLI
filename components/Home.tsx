@@ -30,11 +30,11 @@ const Stack = createStackNavigator();
 
 interface HomeProps {
   onLogout: () => void;
-  userToken: string;
+  userToken: any;
 }
 
 export default function Home({onLogout, userToken}: HomeProps) {
-  const {findUserByEmail} = useUser();
+  const {findUserByEmail, updateUserByEmail} = useUser();
   const users: any = findUserByEmail(userToken);
 
   function CallHome({navigation}: any) {
@@ -143,10 +143,9 @@ export default function Home({onLogout, userToken}: HomeProps) {
             paddingBottom: Platform.OS === 'ios' ? -20 : 5,
             height: Platform.OS === 'ios' ? 85 : 75,
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
             overflow: 'hidden',
             backgroundColor: '#8EDFEB',
+            width: Platform.OS === 'web' ? 350 : 'auto',
           },
           tabBarShowLabel: false,
         })}>
@@ -185,9 +184,20 @@ export default function Home({onLogout, userToken}: HomeProps) {
     );
   }
 
-  function handleTime({startTime, duration}: any) {
-    console.log('Start Time: ', startTime);
-    console.log('Duration: ', duration);
+  function handleTime(startTime: number, duration: number, id: string) {
+    const startDate = new Date(startTime);
+
+    const minutes = Math.floor(duration / 60000); // 60,000 ms in a minute
+    const seconds = Math.floor((duration % 60000) / 1000); // remaining seconds
+    const callDuration = `${minutes}M:${seconds}S`;
+    const recentCallData = {
+      Name: id,
+      last_call: startDate.toLocaleString(),
+      profile: '../assets/profile.png',
+    };
+    updateUserByEmail(userToken, {
+      recent: [...users.recent, recentCallData],
+    });
   }
 
   function CallCalling({navigation, route}: any) {

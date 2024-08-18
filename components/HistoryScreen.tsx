@@ -8,6 +8,15 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
+import {
+  format,
+  isToday,
+  isYesterday,
+  isThisWeek,
+  parseISO,
+  isValid,
+  parse,
+} from 'date-fns';
 import {useStyle, useUser} from '../AppContext';
 
 interface HistoryScreenProps {
@@ -19,9 +28,59 @@ export default function HistoryScreen({
   userToken,
   navigation,
 }: HistoryScreenProps) {
-  const {appStyles} = useStyle();
+  const {appStyles, theme} = useStyle();
   const {updateUserByEmail} = useUser();
   const [isEditing, setIsEditing] = useState(false);
+
+  const knownFormats = [
+    'M/d/yyyy, h:mm:ss a', // Example format for "8/3/2024, 11:52:17 AM"
+    'yyyy-MM-ddTHH:mm:ssZ', // ISO format
+  ];
+
+  const formatDate = (dateString: string) => {
+    console.log('-------------------called for: ', dateString);
+    let date;
+
+    // Try to parse the dateString with known formats
+    for (const formatString of knownFormats) {
+      try {
+        date = parse(dateString, formatString, new Date());
+        if (isValid(date)) {
+          break;
+        }
+      } catch (e) {
+        date = null;
+      }
+    }
+
+    if (isValid(date)) console.log('---------------format valid');
+    else console.log('------------------------format invalid');
+
+    // Check if date is valid
+    if (date && isValid(date)) {
+      if (isToday(date)) {
+        console.log('------------------returning today');
+        return `Today at ${format(date, 'h:mm a')}`;
+      }
+
+      if (isYesterday(date)) {
+        console.log('------------------returning yesterday');
+        return `Yesterday at ${format(date, 'h:mm a')}`;
+      }
+
+      if (isThisWeek(date)) {
+        console.log('------------------returning this week');
+        return format(date, 'EEEE'); // Weekday name
+      }
+
+      console.log('------------------returning default');
+      return format(date, 'M/d/yyyy, h:mm a'); // Default format
+    }
+
+    // Return the original string if it's not a valid date
+    console.log('------------------returning original');
+    return dateString;
+  };
 
   const renderRecent = () => {
     const deleteRecent = (name: string) => {
@@ -39,7 +98,16 @@ export default function HistoryScreen({
             alignItems: 'flex-end',
             paddingHorizontal: 15,
           }}>
-          <Text>Edit</Text>
+          {isEditing ? (
+            <Text>Done</Text>
+          ) : (
+            <View>
+              <Image
+                source={require('../assets/edit_box.png')}
+                style={styles.editImg}
+              />
+            </View>
+          )}
         </TouchableOpacity>
         {userToken.recent.map((item: any) => (
           <TouchableOpacity
@@ -66,7 +134,7 @@ export default function HistoryScreen({
                 {item.Name}
               </Text>
               <Text style={[styles.recent_data_time, appStyles.text]}>
-                {item.last_call}
+                {formatDate(item.last_call)}
               </Text>
             </View>
             {/* <View style={styles.recent_info}>
@@ -88,7 +156,14 @@ export default function HistoryScreen({
             navigation.navigate('Home');
           }}>
           <View style={[styles.backContainer, appStyles.colorBackground]}>
-            <Text>🔙</Text>
+            <Image
+              source={
+                theme === 'light'
+                  ? require('../assets/back_w.png')
+                  : require('../assets/back_b.png')
+              }
+              style={styles.back}
+            />
           </View>
         </TouchableOpacity>
         <Text style={[styles.headerText, appStyles.text]}>History</Text>
@@ -132,7 +207,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   back: {
-    color: 'white',
+    height: 27,
+    width: 27,
+    padding: 0,
   },
   headerText: {
     position: 'absolute',
@@ -142,6 +219,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     alignSelf: 'center',
     opacity: 0.4,
+    zIndex: -1,
   },
   bodyContainer: {
     margin: 10,
@@ -154,6 +232,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     shadowColor: 'black',
     alignItems: 'center',
+  },
+  editImg: {
+    height: 18,
+    width: 18,
   },
   recent_img: {
     width: 60,

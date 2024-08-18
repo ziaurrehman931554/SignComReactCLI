@@ -14,6 +14,15 @@ import {
   TouchableHighlight,
   Platform,
 } from 'react-native';
+import {
+  format,
+  isToday,
+  isYesterday,
+  isThisWeek,
+  parseISO,
+  isValid,
+  parse,
+} from 'date-fns';
 import {useUser, useStyle} from '../AppContext';
 
 interface HomeScreenProps {
@@ -25,6 +34,42 @@ export default function HomeScreen({userToken, navigation}: HomeScreenProps) {
   const {appStyles, theme} = useStyle();
   const {searchText, setSearchText, updateUserByEmail} = useUser();
   const [isEditing, setIsEditing] = useState(false);
+
+  // Define known date formats
+  const knownFormats = ['M/d/yyyy, h:mm:ss a', 'yyyy-MM-ddTHH:mm:ssZ'];
+
+  const formatDate = (dateString: string) => {
+    let date;
+
+    for (const formatString of knownFormats) {
+      try {
+        date = parse(dateString, formatString, new Date());
+        if (isValid(date)) {
+          break;
+        }
+      } catch (e) {
+        date = null;
+      }
+    }
+
+    if (date && isValid(date)) {
+      if (isToday(date)) {
+        return `Today at ${format(date, 'h:mm a')}`;
+      }
+
+      if (isYesterday(date)) {
+        return `Yesterday at ${format(date, 'h:mm a')}`;
+      }
+
+      if (isThisWeek(date)) {
+        return format(date, 'EEEE');
+      }
+
+      return format(date, 'M/d/yyyy, h:mm a');
+    }
+
+    return dateString;
+  };
 
   const renderFavorites = () => {
     const deleteFavorite = (name: string) => {
@@ -79,11 +124,14 @@ export default function HomeScreen({userToken, navigation}: HomeScreenProps) {
   };
 
   const renderRecent = () => {
-    const deleteRecent = (name: string) => {
-      const updatedRecent = userToken.recent.filter(
-        (item: any) => item.Name !== name,
-      );
-      updateUserByEmail(userToken.email, {recent: updatedRecent});
+    const addToFavorites = (name: string) => {
+      const updatedFavorites = {
+        Name: name,
+        profile: '../assets/profile.png',
+      };
+      updateUserByEmail(userToken.email, {
+        favorites: [...userToken.favorites, updatedFavorites],
+      });
     };
     return (
       <>
@@ -100,9 +148,9 @@ export default function HomeScreen({userToken, navigation}: HomeScreenProps) {
             }>
             {isEditing && (
               <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={() => deleteRecent(item.Name)}>
-                <Text style={styles.deleteText}>X</Text>
+                style={styles.addButton}
+                onPress={() => addToFavorites(item.Name)}>
+                <Text style={styles.addText}>+</Text>
               </TouchableOpacity>
             )}
             <View style={styles.recent_img}>
@@ -116,7 +164,7 @@ export default function HomeScreen({userToken, navigation}: HomeScreenProps) {
                 {item.Name}
               </Text>
               <Text style={[styles.recent_data_time, appStyles.text]}>
-                {item.last_call}
+                {formatDate(item.last_call)}
               </Text>
             </View>
             {/* <View style={styles.recent_info}>
@@ -136,7 +184,7 @@ export default function HomeScreen({userToken, navigation}: HomeScreenProps) {
         <TouchableOpacity
           style={styles.menuContainer}
           onPress={() => navigation.navigate('Drawer')}>
-          <Image source={require('../assets/menu.png')} style={styles.menu} />
+          <Image source={require('../assets/menu_b.png')} style={styles.menu} />
         </TouchableOpacity>
         <Text style={[styles.hi, appStyles.inverseText]}>Hi,</Text>
         <Text style={[styles.name, appStyles.colorText]}>{userToken.name}</Text>
@@ -159,7 +207,11 @@ export default function HomeScreen({userToken, navigation}: HomeScreenProps) {
           <View
             style={[
               appStyles.container,
-              {alignItems: 'center', justifyContent: 'center', marginTop: -90},
+              {
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: -90,
+              },
             ]}>
             <Text style={[appStyles.text, {fontSize: 17, letterSpacing: 3}]}>
               No Recent Calls
@@ -174,9 +226,16 @@ export default function HomeScreen({userToken, navigation}: HomeScreenProps) {
                 Favorites
               </Text>
               <TouchableOpacity onPress={() => setIsEditing(prev => !prev)}>
-                <Text style={[styles.headingEdit, appStyles.text]}>
-                  Edit {'>'}
-                </Text>
+                {isEditing ? (
+                  <Text style={[styles.headingEdit, appStyles.text]}>Done</Text>
+                ) : (
+                  <View>
+                    <Image
+                      source={require('../assets/edit_box.png')}
+                      style={styles.editImg}
+                    />
+                  </View>
+                )}
               </TouchableOpacity>
             </View>
             <View style={[styles.renderFavContainer, appStyles.background]}>
@@ -188,11 +247,33 @@ export default function HomeScreen({userToken, navigation}: HomeScreenProps) {
           <View style={styles.recentContainer}>
             <View style={styles.heading}>
               <Text style={[styles.headingText, appStyles.text]}>Recent</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('History')}>
-                <Text style={[styles.headingEdit, appStyles.text]}>
-                  History {'>'}
-                </Text>
-              </TouchableOpacity>
+              <View style={{flexDirection: 'row', gap: 9}}>
+                {!isEditing && (
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('History')}>
+                    <View>
+                      <Image
+                        source={require('../assets/history_b.png')}
+                        style={styles.editImg}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity onPress={() => setIsEditing(prev => !prev)}>
+                  {isEditing ? (
+                    <Text style={[styles.headingEdit, appStyles.text]}>
+                      Done
+                    </Text>
+                  ) : (
+                    <View>
+                      <Image
+                        source={require('../assets/edit_box.png')}
+                        style={styles.editImg}
+                      />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
             <View>{renderRecent()}</View>
           </View>
@@ -223,8 +304,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   menu: {
-    height: 30,
-    width: 30,
+    height: 40,
+    width: 40,
     resizeMode: 'cover',
   },
   hi: {
@@ -238,6 +319,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     marginTop: Platform.OS === 'ios' ? -7 : -20,
     fontWeight: 'bold',
+  },
+  editImg: {
+    height: 18,
+    width: 18,
   },
   searchContainer: {
     width: '100%',
@@ -262,7 +347,8 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 15,
     display: 'flex',
-    paddingRight: -11,
+    // alignItems: "center",
+    paddingRight: -25,
   },
   favoritesContainer: {
     width: '95%',
@@ -345,6 +431,26 @@ const styles = StyleSheet.create({
   deleteText: {
     color: 'white',
     fontSize: 14,
+    fontWeight: 'bold',
+  },
+  addButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'green',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  addText: {
+    position: 'relative',
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: 'white',
+    fontSize: 18,
     fontWeight: 'bold',
   },
   recent_container: {

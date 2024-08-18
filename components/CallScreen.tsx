@@ -24,7 +24,7 @@ interface CallScreenProps {
 }
 
 export default function CallScreen({navigation}: CallScreenProps) {
-  const {appStyles} = useStyle();
+  const {appStyles, theme} = useStyle();
   const route = useRoute<RouteParams>();
   const {user}: any = route?.params || '';
   const u = user ? user.Name : '';
@@ -48,7 +48,14 @@ export default function CallScreen({navigation}: CallScreenProps) {
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.navigate('Home')}>
             <View style={[styles.backContainer, appStyles.colorBackground]}>
-              <Text style={[styles.back, appStyles.text]}>🔙</Text>
+              <Image
+                source={
+                  theme === 'light'
+                    ? require('../assets/back_w.png')
+                    : require('../assets/back_b.png')
+                }
+                style={styles.back}
+              />
             </View>
           </TouchableOpacity>
           <Text style={styles.headerText}>Make a Call</Text>
@@ -56,7 +63,14 @@ export default function CallScreen({navigation}: CallScreenProps) {
         <View style={styles.joinContainer}>
           <Text style={styles.title}>Join Existing Channel</Text>
           <View style={[styles.imgContainer, appStyles.containerBack]}>
-            <Image source={require('../assets/join.png')} style={styles.img} />
+            <Image
+              source={
+                theme === 'light'
+                  ? require('../assets/incoming_b.png')
+                  : require('../assets/incoming_w.png')
+              }
+              style={styles.img}
+            />
           </View>
           <TextInput
             style={[styles.input, appStyles.containerBack, appStyles.text]}
@@ -81,7 +95,14 @@ export default function CallScreen({navigation}: CallScreenProps) {
             Generate New Channel {u && <Text>for {u}</Text>}
           </Text>
           <View style={[styles.imgContainer, appStyles.containerBack]}>
-            <Image source={require('../assets/join.png')} style={styles.img} />
+            <Image
+              source={
+                theme === 'light'
+                  ? require('../assets/outgoing_b.png')
+                  : require('../assets/outgoing_w.png')
+              }
+              style={styles.img}
+            />
           </View>
           <TextInput
             style={[styles.input, appStyles.containerBack, appStyles.text]}
@@ -95,9 +116,7 @@ export default function CallScreen({navigation}: CallScreenProps) {
           <TouchableOpacity
             style={[styles.btn, appStyles.colorBackground]}
             onPress={HandleJoin}>
-            <Text style={[styles.btnText, appStyles.text]}>
-              Generate & Join
-            </Text>
+            <Text style={[styles.btnText, appStyles.text]}>Create & Join</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.addPad}></View>
@@ -132,6 +151,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   back: {
+    height: 27,
+    width: 27,
     padding: 0,
   },
   headerText: {
@@ -142,6 +163,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     alignSelf: 'center',
     opacity: 0.5,
+    zIndex: -1,
   },
   joinContainer: {
     width: '100%',
@@ -162,8 +184,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   img: {
-    width: '120%',
-    height: '120%',
+    width: '60%',
+    height: '60%',
     alignSelf: 'center',
   },
   input: {

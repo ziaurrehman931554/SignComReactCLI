@@ -35,7 +35,14 @@ export default function AccountScreen({
           onPress={() => navigation.goBack()}
           onLongPress={onLogout}>
           <View style={[styles.backContainer, appStyles.colorBackground]}>
-            <Text>🔙</Text>
+            <Image
+              source={
+                theme === 'light'
+                  ? require('../assets/back_w.png')
+                  : require('../assets/back_b.png')
+              }
+              style={styles.back}
+            />
           </View>
         </TouchableOpacity>
         <Text style={[styles.headerText, appStyles.text]}>Account</Text>
@@ -137,7 +144,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   back: {
-    color: 'white',
+    height: 27,
+    width: 27,
+    padding: 0,
   },
   headerText: {
     position: 'absolute',
@@ -147,6 +156,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     alignSelf: 'center',
     opacity: 0.4,
+    zIndex: -1,
   },
   body: {
     display: 'flex',
