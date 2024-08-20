@@ -69,8 +69,14 @@ const OnBoardingScreen: React.FC<OnBoardingScreenProps> = ({onComplete}) => {
 
   const renderItem = ({item}: {item: OnBoardingData}) => {
     return (
-      <View style={{width: Dimensions.get('window').width}}>
-        <Image source={item.imageSource} style={{width: '100%', height: 300}} />
+      <View
+        style={{
+          width: Platform.OS === 'web' ? 375 : Dimensions.get('window').width,
+        }}>
+        <Image
+          source={item.imageSource}
+          style={{width: 300, height: 300, alignSelf: 'center'}}
+        />
         <Text
           style={[
             {
@@ -199,17 +205,13 @@ const OnBoardingScreen: React.FC<OnBoardingScreenProps> = ({onComplete}) => {
             )}
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              onPress={onComplete}
-              disabled={
-                Platform.OS === 'web'
-                  ? false
-                  : activeIndex !== OnBoardingData.length
-              }>
+            <TouchableOpacity onPress={onComplete}>
               <View
                 style={[
                   styles.button,
-                  activeIndex !== OnBoardingData.length
+                  Platform.OS === 'web'
+                    ? appStyles.colorBackground
+                    : activeIndex !== OnBoardingData.length
                     ? styles.black
                     : appStyles.colorBackground,
                 ]}>
