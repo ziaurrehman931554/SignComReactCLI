@@ -40,14 +40,18 @@ export default function HomeScreen({
   const {updateUserByEmail} = useUser();
   const [searchText, setSearchText] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-  const [filteredRecent, setFilteredRecent] = useState(userToken.recent);
+  const [filteredRecent, setFilteredRecent]: any = useState(null);
+
+  useEffect(() => {
+    setFilteredRecent(userToken?.recent);
+  });
 
   useEffect(() => {
     const filteredRec = userToken.recent.filter((item: any) =>
       item.Name.toLowerCase().includes(searchText.toLowerCase()),
     );
     setFilteredRecent(filteredRec);
-  }, [searchText, userToken.recent]);
+  }, [searchText, userToken?.recent]);
 
   const knownFormats = ['M/d/yyyy, h:mm:ss a', 'yyyy-MM-ddTHH:mm:ssZ'];
 
@@ -225,17 +229,17 @@ export default function HomeScreen({
           </TouchableOpacity>
         </View>
       </View>
-      {!userToken.favorites && !userToken.recent && (
+      {userToken.favorites.length === 0 && userToken.recent.length === 0 && (
         <View
           style={[
             appStyles.container,
             {
               alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: -90,
+              justifyContent: 'flex-start',
+              marginTop: 50,
             },
           ]}>
-          <Text style={[appStyles.text, {fontSize: 17, letterSpacing: 3}]}>
+          <Text style={[appStyles.text, {fontSize: 17, letterSpacing: 2}]}>
             No Recent Calls
           </Text>
         </View>
