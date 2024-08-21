@@ -1,6 +1,12 @@
 /* eslint-disable prettier/prettier */
 import React, {createContext, useContext, useState} from 'react';
-import {Platform, StyleSheet} from 'react-native';
+import {
+  ActivityIndicator,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 interface User {
   email: string;
@@ -18,9 +24,11 @@ interface UserContextData {
   searchText: string;
   setSearchText: (newSearchText: string) => void;
   addUserToData: (userData: User) => void;
+  removeUserFromData: (email: string) => void;
   findUserByEmail: (email: string) => User | undefined;
   updateUserByEmail: (email: string, updatedUserData: Partial<User>) => void;
   getUserData: () => User[];
+  setRootLoading: (loading: boolean) => void;
 }
 
 const UserContext = createContext<UserContextData>({
@@ -28,9 +36,11 @@ const UserContext = createContext<UserContextData>({
   searchText: '',
   setSearchText: () => {},
   addUserToData: () => {},
+  removeUserFromData: () => {},
   findUserByEmail: () => undefined,
   updateUserByEmail: () => {},
   getUserData: () => [],
+  setRootLoading: () => {},
 });
 
 interface StyleContextData {
@@ -72,143 +82,22 @@ export function AppProvider({children}: {children: React.ReactNode}) {
           last_call: 'yesterday at 9:41',
           profile: '../assets/profile.png',
         },
-        {Name: 'Name C', last_call: 'Sunday', profile: '../assets/profile.png'},
-        {Name: 'Name D', last_call: '1M Ago', profile: '../assets/profile.png'},
-      ],
-      setting: [],
-    },
-    {
-      email: 'zia@gmail.com',
-      password: '456',
-      name: 'Zia',
-      type: 'normal',
-      profile: '../assets/profile.png',
-      favorites: [
-        {Name: 'Name A', profile: '../assets/profile.png'},
-        {Name: 'Name B', profile: '../assets/profile.png'},
-        {Name: 'Name C', profile: '../assets/profile.png'},
-      ],
-      recent: [
         {
-          Name: 'Name',
-          last_call: 'Today at 11:11',
+          Name: 'Name C',
+          last_call: 'Sunday',
           profile: '../assets/profile.png',
         },
         {
-          Name: 'Name B',
-          last_call: 'yesterday at 9:41',
+          Name: 'Name D',
+          last_call: '1M Ago',
           profile: '../assets/profile.png',
         },
-        {Name: 'Name C', last_call: 'Sunday', profile: '../assets/profile.png'},
-      ],
-      setting: [],
-    },
-    {
-      email: 'abc@gmail.com',
-      password: '123',
-      name: 'abc',
-      type: 'special',
-      profile: '../assets/profile.png',
-      favorites: [
-        {Name: 'Name A', profile: '../assets/profile.png'},
-        {Name: 'Name B', profile: '../assets/profile.png'},
-        {Name: 'Name C', profile: '../assets/profile.png'},
-      ],
-      recent: [
-        {
-          Name: 'Name',
-          last_call: 'Today at 11:11',
-          profile: '../assets/profile.png',
-        },
-        {
-          Name: 'Name B',
-          last_call: 'yesterday at 9:41',
-          profile: '../assets/profile.png',
-        },
-        {Name: 'Name C', last_call: 'Sunday', profile: '../assets/profile.png'},
-      ],
-      setting: [],
-    },
-    {
-      email: 'a',
-      password: '1',
-      name: 'a',
-      type: 'special',
-      profile: '../assets/profile.png',
-      favorites: [
-        {Name: 'Name A', profile: '../assets/profile.png'},
-        {Name: 'Name B', profile: '../assets/profile.png'},
-        {Name: 'Name C', profile: '../assets/profile.png'},
-      ],
-      recent: [
-        {
-          Name: 'Name',
-          last_call: 'Today at 11:11',
-          profile: '../assets/profile.png',
-        },
-        {
-          Name: 'Name B',
-          last_call: 'yesterday at 9:41',
-          profile: '../assets/profile.png',
-        },
-        {Name: 'Name C', last_call: 'Sunday', profile: '../assets/profile.png'},
-      ],
-      setting: [],
-    },
-    {
-      email: 'ushnashiekh454@gmail.com',
-      password: 'ushna123',
-      name: 'Ushna Shehzad',
-      type: 'normal',
-      profile: '../assets/profile.png',
-      favorites: [
-        {Name: 'Name A', profile: '../assets/profile.png'},
-        {Name: 'Name B', profile: '../assets/profile.png'},
-        {Name: 'Name C', profile: '../assets/profile.png'},
-      ],
-      recent: [
-        {
-          Name: 'Name',
-          last_call: 'Today at 11:11',
-          profile: '../assets/profile.png',
-        },
-        {
-          Name: 'Name B',
-          last_call: 'yesterday at 9:41',
-          profile: '../assets/profile.png',
-        },
-        {Name: 'Name C', last_call: 'Sunday', profile: '../assets/profile.png'},
-      ],
-      setting: [],
-    },
-    {
-      email: 'manahil45@gmail.com',
-      password: 'manahil123',
-      name: 'Manahil Shahdab',
-      type: 'normal',
-      profile: '../assets/profile.png',
-      favorites: [
-        {Name: 'Name A', profile: '../assets/profile.png'},
-        {Name: 'Name B', profile: '../assets/profile.png'},
-        {Name: 'Name C', profile: '../assets/profile.png'},
-      ],
-      recent: [
-        {
-          Name: 'Name',
-          last_call: 'Today at 11:11',
-          profile: '../assets/profile.png',
-        },
-        {
-          Name: 'Name B',
-          last_call: 'yesterday at 9:41',
-          profile: '../assets/profile.png',
-        },
-        {Name: 'Name C', last_call: 'Sunday', profile: '../assets/profile.png'},
       ],
       setting: [],
     },
   ]);
   const [searchText, setSearchText] = useState('');
+  const [rootLoading, setRootLoading] = useState(false);
   const [theme, setTheme] = useState('light');
   const [toAppColor, setToAppColor] = useState(false);
   const lightBackground = 'white';
@@ -222,6 +111,12 @@ export function AppProvider({children}: {children: React.ReactNode}) {
 
   const addUserToData = (userData: User) => {
     setUsersData([...usersData, userData]);
+  };
+
+  const removeUserFromData = (email: string) => {
+    setUsersData(prevUsersData =>
+      prevUsersData.filter(user => user.email !== email),
+    );
   };
 
   const findUserByEmail = (email: string) => {
@@ -281,6 +176,15 @@ export function AppProvider({children}: {children: React.ReactNode}) {
       paddingTop: Platform.OS === 'ios' ? 35 : 25,
     },
   });
+  const [conn, setConn] = useState('');
+
+  useState(() => {
+    if (rootLoading) {
+      setTimeout(() => {
+        setConn('Connection Unstable. Please be Patient!');
+      }, 3000);
+    }
+  });
 
   return (
     <StyleContext.Provider
@@ -291,10 +195,46 @@ export function AppProvider({children}: {children: React.ReactNode}) {
           searchText,
           setSearchText,
           addUserToData,
+          removeUserFromData,
           findUserByEmail,
           updateUserByEmail,
           getUserData,
+          setRootLoading,
         }}>
+        {rootLoading && (
+          <View
+            style={{
+              ...StyleSheet.absoluteFillObject,
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1000,
+              backgroundColor: 'rgba(200, 200, 200, 0.3)',
+            }}>
+            <View
+              style={{
+                backgroundColor: darkColor,
+                padding: 15,
+                borderRadius: 15,
+              }}>
+              <ActivityIndicator size="large" color={lightColor} />
+              <Text style={{color: lightColor, textAlign: 'center'}}>
+                Loading Data..
+              </Text>
+              {conn && (
+                <Text
+                  style={{
+                    color: lightColor,
+                    textAlign: 'center',
+                    maxWidth: 150,
+                    fontSize: 12,
+                    opacity: 0.8,
+                  }}>
+                  {conn}
+                </Text>
+              )}
+            </View>
+          </View>
+        )}
         {children}
       </UserContext.Provider>
     </StyleContext.Provider>

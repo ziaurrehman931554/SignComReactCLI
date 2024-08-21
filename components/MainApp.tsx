@@ -41,14 +41,14 @@ export default function MainApp({reset}: MainAppProps) {
           <ActivityIndicator size={'large'} color={appStyles.text.color} />
         </View>
       ) : isAuthenticated && user ? (
-        <Home onLogout={handleLogout} userToken={user.email || ''} />
+        <Home onLogout={handleLogout} userToken={user.email} />
       ) : (
         <View
           style={{
             flex: 1,
             paddingTop: Platform.OS === 'ios' ? insets.top : 0,
           }}>
-          <Login onLogin={handleLogin} reset={reset} />
+          <Login onLogin={handleLogin} reset={reset} onLogout={handleLogout} />
         </View>
       )}
     </View>
